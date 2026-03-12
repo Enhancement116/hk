@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKG_DAY_01 | 香港登陸戰導覽</title>
+    <style>
+        :root {
+            --bg-color: #f4f5f9;
+            --text-main: #111111; 
+            --text-sub: #444444;
+            --tech-blue: #005bb5; 
+            --tech-blue-light: rgba(0, 91, 181, 0.08);
+            --card-bg: #ffffff;
+            --border-color: #d1d5db;
+            --tag-time: #e3f2fd;
+            --tag-money: #fce4ec;
+            --tag-star: #fff8e1;
+            --tag-tip: #e8f5e9;
+            --plan-b-bg: #fff3e0;
+            --plan-b-border: #ffb74d;
+        }
+
+        /* 🌙 深色模式變數 */
+        body.dark-mode {
+            --bg-color: #121212; --text-main: #e0e0e0; --text-sub: #a0a0a0;
+            --card-bg: #1e1e1e; --border-color: #333333;
+            --tech-blue: #4da8da; --tech-blue-light: rgba(77, 168, 218, 0.15);
+            --tag-time: #1a365d; --tag-money: #4a148c; --tag-star: #f57f17; --tag-tip: #1b5e20;
+            --plan-b-bg: #3e2723; --plan-b-border: #ff9800;
+        }
+
+        body {
+            background-color: var(--bg-color); color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 頂部資訊列 */
+        .sys-header {
+            padding: 12px 20px; background: var(--card-bg); border-bottom: 2px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center; z-index: 20; position: relative;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        h1 { font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main); letter-spacing: 0.5px; }
+        .theme-toggle { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; transition: all 0.2s; }
+        .theme-toggle:active { transform: scale(0.9); }
+        #live-clock { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: var(--tech-blue); background: var(--tech-blue-light); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(0, 91, 181, 0.2); }
+
+        /* 💱 即時匯率面板 (浮動) */
+        .currency-panel {
+            position: absolute; top: 65px; left: 15px; background: var(--card-bg);
+            border: 2px solid var(--tech-blue); border-radius: 12px; padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100;
+            display: none; flex-direction: column; gap: 10px; width: 230px;
+            transform-origin: top left; animation: scaleIn 0.2s ease-out forwards;
+        }
+        .currency-panel.show { display: flex; }
+        .currency-panel input { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1.1rem; width: 100%; box-sizing: border-box; background: var(--bg-color); color: var(--text-main); font-weight: bold; }
+        .currency-panel input:focus { outline: none; border-color: var(--tech-blue); }
+        
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* 卡牌疊放區 */
+        .card-stack { flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; perspective: 1000px; overflow: hidden; width: 100%; z-index: 1; }
+        .card {
+            position: absolute; width: 88%; max-width: 420px; height: 72vh; background: var(--card-bg);
+            border: 2px solid var(--border-color); border-radius: 20px; padding: 25px 22px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease, background 0.3s ease;
+            opacity: 0; pointer-events: none; transform: translateX(100%) scale(0.9) rotate(4deg); overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        .card::-webkit-scrollbar { width: 4px; }
+        .card::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        
+        .card.active { opacity: 1; transform: translateX(0) scale(1) rotate(0deg); pointer-events: auto; border-color: var(--tech-blue); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); z-index: 5; }
+        .card.prev { transform: translateX(-100%) scale(0.9) rotate(-4deg); opacity: 0; z-index: 4; }
+
+        /* 排版樣式 */
+        .time { display: inline-block; font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 800; color: var(--tech-blue); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; }
+        .title { font-size: 1.65rem; font-weight: 800; margin: 0 0 10px 0; line-height: 1.35; color: var(--text-main); }
+        .location-bar { display: flex; align-items: center; font-size: 1.05rem; font-weight: 700; color: var(--text-sub); margin-bottom: 15px; background: var(--tech-blue-light); padding: 6px 10px; border-radius: 6px; }
+        .location-bar::before { content: '📍'; margin-right: 6px; }
+        .desc { font-size: 1.1rem; color: var(--text-sub); margin: 0; line-height: 1.7; flex-grow: 1; }
+
+        /* 🚀 戰術動線圖與時間軸 */
+        .indoor-map { margin: 15px 0; background: var(--bg-color); border: 1px dashed var(--tech-blue); border-radius: 8px; padding: 15px; position: relative; transition: background 0.3s ease; }
+        .indoor-map-title { font-family: 'Consolas', monospace; font-size: 0.95rem; color: var(--tech-blue); font-weight: bold; border-bottom: 1px solid rgba(0, 91, 181, 0.2); padding-bottom: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .indoor-map-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--tech-blue); animation: pulse 1.5s infinite; }
+        .path-container { display: flex; flex-direction: column; position: relative; padding-left: 10px; }
+        .path-node { display: flex; align-items: flex-start; gap: 15px; position: relative; padding-bottom: 20px; }
+        .path-node:not(:last-child)::before { content: ''; position: absolute; left: 7px; top: 20px; bottom: 0; width: 2px; background: var(--border-color); }
+        .p-dot { width: 16px; height: 16px; background: var(--card-bg); border: 3px solid var(--border-color); border-radius: 50%; z-index: 2; margin-top: 4px; }
+        .path-node.active .p-dot { border-color: var(--tech-blue); background: var(--tech-blue); box-shadow: 0 0 12px rgba(0, 91, 181, 0.4); transform: scale(1.2); }
+        .p-label { font-size: 1.05rem; font-weight: 600; color: var(--text-sub); line-height: 1.4; }
+        .path-node.active .p-label { color: var(--text-main); font-weight: 800; }
+        .p-sub { display: block; font-size: 0.95rem; font-weight: normal; color: var(--tech-blue); margin-top: 4px; }
+
+        /* 儀表板數據文字 (DAY_01 專屬) */
+        .live-data-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .live-data-label { font-weight: bold; color: var(--text-sub); font-size: 1.05rem; }
+        .live-data-value { font-size: 1.3rem; font-family: 'Consolas', monospace; font-weight: 900; }
+
+        /* 標籤與備案 */
+        .checklist { margin: 15px 0; padding: 12px 15px; background: var(--tech-blue-light); border: 1px solid var(--border-color); border-radius: 8px; }
+        .checklist-title { font-weight: 800; color: var(--text-main); margin-bottom: 8px; font-size: 1.05rem; }
+        .checklist label { display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 1.05rem; color: var(--text-sub); line-height: 1.4;}
+        .checklist input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; margin-top: 3px; flex-shrink: 0;}
+
+        .plan-b { margin-top: 15px; padding: 12px 15px; background: var(--plan-b-bg); border-left: 5px solid var(--plan-b-border); border-radius: 4px; font-size: 1.05rem; }
+        .plan-b-title { font-weight: 800; color: #e65100; margin-bottom: 5px; font-size: 1.05rem; display: flex; align-items: center; gap: 6px; }
+
+        .info-group { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
+        .tag-row { display: flex; align-items: flex-start; gap: 10px; }
+        .tag { flex-shrink: 0; font-size: 0.95rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
+        .tag-row p { margin: 0; font-size: 1.05rem; line-height: 1.5; color: var(--text-main); }
+        .tag.t-time { background: var(--tag-time); color: #0277bd; }
+        .tag.t-money { background: var(--tag-money); color: #c2185b; }
+        .tag.t-star { background: var(--tag-star); color: #e65100; }
+        .tag.t-tip { background: var(--tag-tip); color: #2e7d32; }
+
+        body.dark-mode .tag.t-time { color: #81d4fa; }
+        body.dark-mode .tag.t-money { color: #f48fb1; }
+        body.dark-mode .tag.t-star { color: #ffcc80; }
+        body.dark-mode .tag.t-tip { color: #a5d6a7; }
+
+        /* 預算框 (DAY_01 專屬) */
+        .data-box { margin-top: 20px; background: var(--bg-color); border: 1px solid var(--border-color); border-left: 5px solid var(--tech-blue); padding: 15px; font-family: 'Consolas', monospace; font-size: 1.05rem; display: flex; flex-direction: column; gap: 8px; border-radius: 6px; }
+        body.dark-mode .data-box { background: #222; border-color: #444; }
+        .data-box .total { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-weight: 800; font-size: 1.25rem; color: #d93025; }
+
+        /* 零流量 GPS 導航按鈕 */
+        .nav-btn {
+            display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px 0;
+            background: var(--card-bg); border: 2px solid var(--tech-blue); color: var(--tech-blue); border-radius: 10px;
+            font-family: 'Consolas', monospace; font-size: 1.05rem; font-weight: 800; text-decoration: none;
+            margin-top: 20px; transition: all 0.2s; gap: 8px; flex-shrink: 0;
+        }
+        .nav-btn:active { background: var(--tech-blue); color: #fff; transform: scale(0.98); }
+        .nav-btn::before { content: '🗺️'; font-size: 1.2rem; }
+
+        /* 底部操作按鈕 */
+        .controls { padding: 15px 20px 25px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-top: 1px solid var(--border-color); z-index: 10; transition: background 0.3s ease; }
+        .btn { width: 65px; height: 65px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.6rem; color: var(--text-sub); cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .btn:active { transform: scale(0.9); }
+        .btn-center { flex-grow: 1; margin: 0 15px; height: 55px; border-radius: 27px; font-size: 1.15rem; border-color: var(--tech-blue); color: var(--tech-blue); font-weight: 800; }
+        .btn-center:active { background: var(--tech-blue); color: #fff; }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="sys-header">
+        <div class="header-left">
+            <button class="theme-toggle" id="btn-currency" onclick="toggleCurrency()" title="開啟匯率換算">💱</button>
+            <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="切換深淺色">🌞</button>
+            <h1>DAY_01 行程</h1>
+        </div>
+        <span id="live-clock">00:00:00</span>
+
+        <div id="currency-panel" class="currency-panel">
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">匯率換算 (HKD ➔ TWD)</div>
+            <input type="number" id="hkd-input" placeholder="輸入 HKD 金額" oninput="calcCurrency()">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                <span style="font-size: 0.9rem; color: var(--text-sub);">約合台幣：</span>
+                <span style="font-size: 1.3rem; font-weight: 900; color: #d93025; font-family: 'Consolas', monospace;"><span id="twd-output">0</span></span>
+            </div>
+            <small id="rate-display" style="color:var(--text-sub); text-align: right; font-size: 0.75rem; display: block; margin-top: 4px;">準備獲取即時網路匯率...</small>
+        </div>
+    </div>
+
+    <div class="card-stack" id="stack" onclick="closeCurrencyPanel()">
+        
+        <div class="card" data-start="00:00" data-end="11:50">
+            <span class="time">11:50 以前</span>
+            <h3 class="title">飛行與抵達</h3>
+            <div class="location-bar">HKG 香港國際機場 (一號客運大樓)</div>
+            <div class="desc">
+                班機準備著陸，系統時間同步中。
+                <div class="checklist">
+                    <div class="checklist-title">降落前檢核行動：</div>
+                    <label><input type="checkbox"> 護照 / 台胞證 / 電子港簽</label>
+                    <label><input type="checkbox"> 香港入境申報表 (若無港簽需填寫)</label>
+                    <label><input type="checkbox"> 手機更換 SIM 卡 / 開通 eSIM</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-start="11:50" data-end="13:00">
+            <span class="time">11:50 - 13:00</span>
+            <h3 class="title">入境、領行李、緩衝</h3>
+            <div class="location-bar">抵港大堂 (Arrival Hall)</div>
+            <div class="desc">
+                跟隨頭頂「抵港/行李認領」黃色指標前進。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-time">⏱ 耗時</span><p>預估通關與等行李約需 1 小時 10 分鐘。</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-start="13:00" data-end="13:10">
+            <span class="time">13:00 - 13:10</span>
+            <h3 class="title">交通票券購入</h3>
+            <div class="location-bar">接機大堂 A/B 區「客務中心」</div>
+            <div class="desc">
+                出海關抵達大廳後，完全不需要上下樓層。
+                
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 機場室內動線</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">海關檢查 & 綠色通道</div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                接機大堂 (Arrival Hall)
+                                <span class="p-sub">📍 目標：走到大堂中央「圓形客務中心」購票</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                機場快線月台
+                                <span class="p-sub">👉 買完票「正前方大門」直走即達</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-box">
+                    <span>> 項目: 機場快線車票 (機場 ➔ 香港站)</span>
+                    <span class="total">> 總計: $170 HKD</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-start="13:10" data-end="13:35">
+            <span class="time">13:10 - 13:35</span>
+            <h3 class="title">搭乘機場快線</h3>
+            <div class="location-bar">往市區方向 (機場 ➔ 香港站)</div>
+            <div class="desc">
+                班次密集，每 10-15 分鐘一班車。車程極快，僅需 24 分鐘直達市區。
+                
+                <div class="indoor-map">
+                    <div class="indoor-map-title">AEL LIVE SCHEDULE // 即時發車系統</div>
+                    <div class="path-container" style="padding-left: 0; margin-top: 10px;">
+                        <div class="live-data-row">
+                            <span class="live-data-label">🚉 下班發車 (NEXT)</span>
+                            <span id="ael-next-time" class="live-data-value" style="color: var(--text-main);">--:--</span>
+                        </div>
+                        <div class="live-data-row">
+                            <span class="live-data-label">⏳ 距離發車倒數</span>
+                            <span id="ael-countdown" class="live-data-value" style="color: #d93025;">--分 --秒</span>
+                        </div>
+                        <div class="live-data-row" style="border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                            <span class="live-data-label">🏁 抵達香港站 (ARR)</span>
+                            <span id="ael-arr-time" class="live-data-value" style="color: var(--tech-blue);">--:--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-start="13:35" data-end="14:15">
+            <span class="time">13:35 - 14:15</span>
+            <h3 class="title">前往飯店 (轉乘)</h3>
+            <div class="location-bar">香港站的士站 (Taxi Stand)</div>
+            <div class="desc">
+                抵達香港站後，依循「的士 (Taxi)」指標前往排班處。
+                <div class="plan-b">
+                    <div class="plan-b-title">🚖 給司機看的地址 (可截圖/放大)</div>
+                    <b style="font-size: 1.2rem; color: #111;">灣仔 皇后大道東 373號<br>英皇駿景酒店 (The Emperor Hotel)</b>
+                </div>
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 預算</span><p>跳表車資約 $50 - $70 HKD。注意：放後車廂的行李每件需額外加收 $6 HKD。</p></div>
+                </div>
+            </div>
+            
+            <a href="https://maps.google.com/?q=The+Emperor+Hotel+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航至飯店</a>
+        </div>
+
+        <div class="card" data-start="14:15" data-end="15:10">
+            <span class="time">14:15 - 15:10</span>
+            <h3 class="title">飯店入住與整頓</h3>
+            <div class="location-bar">英皇駿景酒店 LOBBY</div>
+            <div class="desc">
+                辦理 Check-in 手續，卸下行李裝備。
+                <div class="checklist">
+                    <div class="checklist-title">入房確認：</div>
+                    <label><input type="checkbox"> 確認是否備有「英規三角插頭」</label>
+                    <label><input type="checkbox"> 護照鎖入保險箱，只帶隨身小包</label>
+                    <label><input type="checkbox"> 攜帶八達通與足夠現金出門</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-start="15:10" data-end="17:20">
+            <span class="time">15:10 - 17:20</span>
+            <h3 class="title">甘牌燒鵝 (遲午餐)</h3>
+            <div class="location-bar">灣仔軒尼詩道226號</div>
+            
+            <div class="desc">
+                連續多年榮獲米其林一星，全港最火紅燒臘。
+                
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 步行前往餐廳</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">出發：英皇駿景酒店</div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                沿「交加里」往北走至「灣仔道」
+                                <span class="p-sub">🚶 順著灣仔市集方向步行約 10 分鐘</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                抵達：軒尼詩道 (近地鐵灣仔站)
+                                <span class="p-sub">📍 看到門口大排長龍的店面即抵達</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-time">⏱ 耗時</span><p>抵達後第一件事：先去門口抽號碼牌！下午時段預估排隊 40-60 分鐘。</p></div>
+                    <div class="tag-row"><span class="tag t-star">⭐ 推薦</span><p>「燒鵝下庄」(鵝腿)、「肥燶叉燒」。</p></div>
+                </div>
+            </div>
+            
+            <a href="https://maps.google.com/?q=Kam's+Roast+Goose" target="_blank" class="nav-btn">開啟 GPS 導航至甘牌</a>
+        </div>
+
+        <div class="card" data-start="17:20" data-end="20:00">
+            <span class="time">17:20 - 20:00</span>
+            <h3 class="title">銅鑼灣小店巡禮</h3>
+            <div class="location-bar">銅鑼灣商圈</div>
+            
+            <div class="desc">
+                飯後移動，主攻當紅烘焙神店與逛街。
+                
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 叮叮車 / 步行</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">出發：甘牌燒鵝</div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                方案A (省力)：搭乘東行叮叮車
+                                <span class="p-sub">🚃 搭 3 站於「百德新街」下車 ($3 HKD)</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                方案B (散步)：沿軒尼詩道直走
+                                <span class="p-sub">🚶 步行約 15 分鐘可達銅鑼灣商圈</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">⭐ Bakehouse</span><p>📍 啟超道16號。招牌：酸種蛋撻。</p></div>
+                    <div class="tag-row"><span class="tag t-star">⭐ Hashtag B</span><p>📍 利園山道73號。招牌：拿破崙焦糖千層蛋撻。</p></div>
+                </div>
+            </div>
+
+            <a href="https://maps.google.com/?q=Bakehouse+Causeway+Bay" target="_blank" class="nav-btn">開啟 GPS 導航至 Bakehouse</a>
+        </div>
+
+        <div class="card" data-start="20:00" data-end="21:35">
+            <span class="time">20:00 - 21:35</span>
+            <h3 class="title">華姐清湯腩 (晚餐)</h3>
+            <div class="location-bar">天后電氣道13號</div>
+            
+            <div class="desc">
+                米其林必比登推薦，湯頭用牛骨與多種藥材熬製。
+
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 搭乘港鐵 (MTR)</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">出發：港鐵 銅鑼灣站 (藍線)</div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                往「柴灣」方向搭乘 1 站
+                                <span class="p-sub">🚇 車程僅 2 分鐘，刷八達通進出</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                抵達：天后站 (A2 出口)
+                                <span class="p-sub">📍 出站後過馬路到對面即達華姐</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">⭐ 推薦</span><p>「清湯牛腩河粉」必點。另外他們的「蘿蔔」吸滿湯汁，是隱藏版神菜。</p></div>
+                </div>
+            </div>
+
+            <a href="https://maps.google.com/?q=Sister+Wah+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航至華姐</a>
+        </div>
+
+        <div class="card" data-start="21:35" data-end="22:45">
+            <span class="time">21:35 - 22:45</span>
+            <h3 class="title">甜姨姨私房甜品</h3>
+            <div class="location-bar">天后清風街13號</div>
+            
+            <div class="desc">
+                體驗正宗香港人的夜生活：飯後糖水。
+
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 巷弄步行</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">出發：華姐清湯腩</div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                沿「電氣道」往東走
+                                <span class="p-sub">🚶 經過兩個路口後，右轉進入「清風街」</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                抵達：甜姨姨私房甜品
+                                <span class="p-sub">📍 步行總耗時約 3~5 分鐘</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">⭐ 推薦</span><p>榴槤甜品非常出名。若不吃榴槤，招牌「芒果神冰」或「芝麻糊豆腐花」絕不會出錯。</p></div>
+                </div>
+            </div>
+
+            <a href="https://maps.google.com/?q=Auntie+Sweet+Tin+Hau" target="_blank" class="nav-btn">開啟 GPS 導航至甜姨姨</a>
+        </div>
+
+        <div class="card" data-start="22:45" data-end="23:59">
+            <span class="time">22:45 - 23:30</span>
+            <h3 class="title">搭乘叮叮車回飯店</h3>
+            <div class="location-bar">上車點：琉璃街站 ➔ 皇后大道東</div>
+            <div class="desc">
+                搭乘雙層電車，以最便宜浪漫的方式結束第一天。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-tip">💡 搭車教學</span><p>1. 車頭螢幕確認方向為「西行」往跑馬地/堅尼地城方向。<br>2. <b>後門上車，不需刷卡</b>。<br>3. 直接上二樓搶最前排座位。<br>4. <b>前門下車，下車時刷八達通</b> ($3 HKD)。</p></div>
+                </div>
+            </div>
+            
+            <a href="https://maps.google.com/?q=The+Emperor+Hotel+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航回飯店</a>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="btn-prev" title="上一個行程">⬅</button>
+        <button class="btn btn-center" id="btn-now">📍 追蹤當前行程</button>
+        <button class="btn" id="btn-next" title="下一個行程">➡</button>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const stack = document.getElementById('stack');
+        const currencyPanel = document.getElementById('currency-panel');
+        let currentIndex = 0;
+
+        // --- 💱 即時網路匯率核心邏輯 ---
+        let currentRate = 4.1; 
+        let isRateFetched = false;
+
+        async function fetchRealTimeRate() {
+            if (isRateFetched) return; 
+            
+            const rateDisplay = document.getElementById('rate-display');
+            rateDisplay.textContent = '🔄 正在獲取最新網路匯率...';
+            rateDisplay.style.color = 'var(--tech-blue)';
+
+            try {
+                const response = await fetch('https://open.er-api.com/v6/latest/HKD');
+                const data = await response.json();
+
+                if (data && data.rates && data.rates.TWD) {
+                    currentRate = data.rates.TWD; 
+                    isRateFetched = true;
+                    rateDisplay.textContent = `✅ 最新匯率 1 HKD = ${currentRate.toFixed(2)} TWD`;
+                    rateDisplay.style.color = '#2e7d32'; 
+                    calcCurrency(); 
+                } else {
+                    throw new Error("API 格式不符");
+                }
+            } catch (error) {
+                console.error("即時匯率抓取失敗，退回預設值：", error);
+                rateDisplay.textContent = `⚠️ 處於離線狀態，使用預設匯率 1 : 4.1`;
+                rateDisplay.style.color = '#d93025'; 
+            }
+        }
+
+        function toggleCurrency() {
+            currencyPanel.classList.toggle('show');
+            if(currencyPanel.classList.contains('show')) {
+                document.getElementById('hkd-input').focus();
+                fetchRealTimeRate(); 
+            }
+        }
+        
+        function closeCurrencyPanel() {
+            if(currencyPanel.classList.contains('show')) {
+                currencyPanel.classList.remove('show');
+            }
+        }
+
+        function calcCurrency() {
+            const hkd = document.getElementById('hkd-input').value;
+            document.getElementById('twd-output').textContent = hkd ? Math.round(hkd * currentRate) : 0;
+        }
+
+        // --- 核心導覽邏輯 ---
+        function timeToMins(timeStr) {
+            let parts = timeStr.split(':');
+            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        }
+
+        // --- 🕒 更新時鐘與 AEL 儀表板 (DAY_01 專屬邏輯) ---
+        function updateSystemData() {
+            const now = new Date();
+            
+            // 系統時間
+            const timeString = 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0') + ':' + 
+                String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('live-clock').textContent = timeString;
+
+            // 機場快線 (AEL) 即時倒數邏輯
+            if(document.getElementById('ael-next-time')) {
+                const currentMin = now.getMinutes();
+                let minsToAdd = 10 - (currentMin % 10);
+                
+                let nextTrainTime = new Date(now.getTime());
+                nextTrainTime.setMinutes(currentMin + minsToAdd);
+                nextTrainTime.setSeconds(0);
+                nextTrainTime.setMilliseconds(0);
+                
+                let nextTrainHour = nextTrainTime.getHours();
+                let nextTrainMin = nextTrainTime.getMinutes();
+
+                let diffMs = nextTrainTime - now;
+                let diffMin = Math.floor(diffMs / 60000);
+                let diffSec = Math.floor((diffMs % 60000) / 1000);
+
+                let arrTime = new Date(nextTrainTime.getTime() + 24 * 60000);
+                let arrHour = arrTime.getHours();
+                let arrMin = arrTime.getMinutes();
+
+                document.getElementById('ael-next-time').textContent = 
+                    String(nextTrainHour).padStart(2, '0') + ':' + String(nextTrainMin).padStart(2, '0');
+                document.getElementById('ael-countdown').textContent = 
+                    String(diffMin).padStart(2, '0') + ' 分 ' + String(diffSec).padStart(2, '0') + ' 秒';
+                document.getElementById('ael-arr-time').textContent = 
+                    String(arrHour).padStart(2, '0') + ':' + String(arrMin).padStart(2, '0');
+            }
+        }
+
+        function getActiveIndexByTime() {
+            const now = new Date();
+            const nowMins = now.getHours() * 60 + now.getMinutes();
+            let targetIndex = cards.length - 1; 
+            for (let i = 0; i < cards.length; i++) {
+                if (nowMins >= timeToMins(cards[i].dataset.start) && nowMins < timeToMins(cards[i].dataset.end)) {
+                    targetIndex = i; break;
+                }
+            }
+            return targetIndex;
+        }
+
+        function renderCards() {
+            cards.forEach((card, index) => {
+                card.classList.remove('active', 'prev');
+                if (index === currentIndex) { card.classList.add('active'); card.scrollTop = 0; } 
+                else if (index < currentIndex) { card.classList.add('prev'); }
+            });
+            closeCurrencyPanel();
+        }
+
+        function goNext() { if (currentIndex < cards.length - 1) { currentIndex++; renderCards(); } }
+        function goPrev() { if (currentIndex > 0) { currentIndex--; renderCards(); } }
+        function jumpToNow() { currentIndex = getActiveIndexByTime(); renderCards(); }
+
+        document.getElementById('btn-next').addEventListener('click', goNext);
+        document.getElementById('btn-prev').addEventListener('click', goPrev);
+        document.getElementById('btn-now').addEventListener('click', jumpToNow);
+
+        // 滑動偵測
+        let touchStartX = 0, touchStartY = 0;
+        stack.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        stack.addEventListener('touchend', e => {
+            let diffX = touchStartX - e.changedTouches[0].screenX;
+            let diffY = Math.abs(touchStartY - e.changedTouches[0].screenY);
+            if (diffY > Math.abs(diffX) && diffY > 50) return;
+            if (diffX > 50) goNext(); else if (diffX < -50) goPrev();
+        }, {passive: true});
+
+        updateSystemData(); setInterval(updateSystemData, 1000); jumpToNow();
+
+        // --- 🌙 深色模式邏輯 ---
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.getElementById('theme-btn');
+            btn.textContent = document.body.classList.contains('dark-mode') ? '🌜' : '🌞';
+            closeCurrencyPanel();
+        }
+    </script>
+</body>
+</html>
