@@ -98,7 +98,7 @@
         .path-node.active .p-label { color: var(--text-main); font-weight: 800; }
         .p-sub { display: block; font-size: 0.95rem; font-weight: normal; color: var(--tech-blue); margin-top: 4px; }
 
-        /* 儀表板數據文字 (DAY_01 專屬) */
+        /* 儀表板數據文字 */
         .live-data-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .live-data-label { font-weight: bold; color: var(--text-sub); font-size: 1.05rem; }
         .live-data-value { font-size: 1.3rem; font-family: 'Consolas', monospace; font-weight: 900; }
@@ -126,10 +126,10 @@
         body.dark-mode .tag.t-star { color: #ffcc80; }
         body.dark-mode .tag.t-tip { color: #a5d6a7; }
 
-        /* 預算框 (DAY_01 專屬) */
+        /* 預算框 */
         .data-box { margin-top: 20px; background: var(--bg-color); border: 1px solid var(--border-color); border-left: 5px solid var(--tech-blue); padding: 15px; font-family: 'Consolas', monospace; font-size: 1.05rem; display: flex; flex-direction: column; gap: 8px; border-radius: 6px; }
         body.dark-mode .data-box { background: #222; border-color: #444; }
-        .data-box .total { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-weight: 800; font-size: 1.25rem; color: #d93025; }
+        .data-box .total { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-weight: 800; font-size: 1.15rem; color: #d93025; }
 
         /* 零流量 GPS 導航按鈕 */
         .nav-btn {
@@ -235,7 +235,8 @@
 
                 <div class="data-box">
                     <span>> 項目: 機場快線車票 (機場 ➔ 香港站)</span>
-                    <span class="total">> 總計: $170 HKD</span>
+                    <span>> 規格: 雙人單趟套票</span>
+                    <span class="total">> 總計: $170 HKD (單人均攤 $85 HKD)</span>
                 </div>
             </div>
         </div>
@@ -278,7 +279,7 @@
                     <b style="font-size: 1.2rem; color: #111;">灣仔 皇后大道東 373號<br>英皇駿景酒店 (The Emperor Hotel)</b>
                 </div>
                 <div class="info-group">
-                    <div class="tag-row"><span class="tag t-money">💰 預算</span><p>跳表車資約 $50 - $70 HKD。注意：放後車廂的行李每件需額外加收 $6 HKD。</p></div>
+                    <div class="tag-row"><span class="tag t-money">💰 的士車資</span><p>跳表約 $50 - $70 HKD。行李放後車廂每件加收 $6 HKD。<b>總預估約 $82 HKD (單人均攤約 $41 HKD)</b>。</p></div>
                 </div>
             </div>
             
@@ -360,7 +361,7 @@
                             <div class="p-dot"></div>
                             <div class="p-label">
                                 方案A (省力)：搭乘東行叮叮車
-                                <span class="p-sub">🚃 搭 3 站於「百德新街」下車 ($3 HKD)</span>
+                                <span class="p-sub">🚃 搭 3 站於「百德新街」下車 (單人車資 $3 HKD，下車刷八達通)</span>
                             </div>
                         </div>
                         <div class="path-node">
@@ -374,6 +375,7 @@
                 </div>
 
                 <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 叮叮車資</span><p>不論遠近單一費率，單人單趟皆為 $3 HKD。</p></div>
                     <div class="tag-row"><span class="tag t-star">⭐ Bakehouse</span><p>📍 啟超道16號。招牌：酸種蛋撻。</p></div>
                     <div class="tag-row"><span class="tag t-star">⭐ Hashtag B</span><p>📍 利園山道73號。招牌：拿破崙焦糖千層蛋撻。</p></div>
                 </div>
@@ -415,7 +417,8 @@
                 </div>
 
                 <div class="info-group">
-                    <div class="tag-row"><span class="tag t-star">⭐ 推薦</span><p>「清湯牛腩河粉」必點。另外他們的「蘿蔔」吸滿湯汁，是隱藏版神菜。</p></div>
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>銅鑼灣 ➔ 天后：單人八達通約 $5 HKD。</p></div>
+                    <div class="tag-row"><span class="tag t-star">⭐ 推薦必點</span><p>「清湯牛腩河粉」。另外他們的「蘿蔔」吸滿湯汁，是隱藏版神菜。</p></div>
                 </div>
             </div>
 
@@ -469,7 +472,8 @@
             <div class="desc">
                 搭乘雙層電車，以最便宜浪漫的方式結束第一天。
                 <div class="info-group">
-                    <div class="tag-row"><span class="tag t-tip">💡 搭車教學</span><p>1. 車頭螢幕確認方向為「西行」往跑馬地/堅尼地城方向。<br>2. <b>後門上車，不需刷卡</b>。<br>3. 直接上二樓搶最前排座位。<br>4. <b>前門下車，下車時刷八達通</b> ($3 HKD)。</p></div>
+                    <div class="tag-row"><span class="tag t-money">💰 叮叮車資</span><p>單人單趟皆為 $3 HKD。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 搭車教學</span><p>1. 車頭螢幕確認方向為「西行」往跑馬地/堅尼地城方向。<br>2. <b>後門上車，不需刷卡</b>。<br>3. 直接上二樓搶最前排座位。<br>4. <b>前門下車，下車時刷八達通</b>。</p></div>
                 </div>
             </div>
             
@@ -546,7 +550,7 @@
             return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
         }
 
-        // --- 🕒 更新時鐘與 AEL 儀表板 (DAY_01 專屬邏輯) ---
+        // --- 🕒 更新時鐘與 AEL 儀表板 ---
         function updateSystemData() {
             const now = new Date();
             

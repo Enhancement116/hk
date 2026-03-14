@@ -76,8 +76,11 @@
 
         /* 大廳選單佈局 */
         .hub-container {
-            flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; align-items: center; -webkit-overflow-scrolling: touch;
+            flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; align-items: center; -webkit-overflow-scrolling: touch; padding-bottom: 40px;
         }
+        .hub-container::-webkit-scrollbar { width: 4px; }
+        .hub-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
         .hub-title { font-size: 1.2rem; font-weight: 800; color: var(--text-sub); margin: 10px 0; text-align: center; letter-spacing: 2px; }
         .hub-title::before, .hub-title::after { content: ' /// '; color: var(--tech-blue); opacity: 0.5; }
 
@@ -89,12 +92,34 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
         .day-card:active { transform: scale(0.97); border-color: var(--tech-blue); background: var(--tech-blue-light); }
-        .day-info { display: flex; flex-direction: column; gap: 5px; }
+        .day-info { display: flex; flex-direction: column; gap: 5px; width: 100%; }
         .day-date { font-family: 'Consolas', monospace; font-size: 0.95rem; color: var(--tech-blue); font-weight: bold; }
         .day-title { font-size: 1.3rem; font-weight: 900; margin: 0; }
-        .day-sub { font-size: 0.9rem; color: var(--text-sub); margin: 0; }
-        .day-arrow { font-size: 1.5rem; color: var(--border-color); font-weight: bold; transition: color 0.2s; }
+        .day-sub { font-size: 0.9rem; color: var(--text-sub); margin: 0; line-height: 1.4; }
+        .day-arrow { font-size: 1.5rem; color: var(--border-color); font-weight: bold; transition: color 0.2s; flex-shrink: 0; margin-left: 10px; }
         .day-card:active .day-arrow { color: var(--tech-blue); }
+
+        /* 每日交通花費標籤 */
+        .day-budget { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+        .b-tag { font-family: 'Consolas', monospace; font-size: 0.8rem; background: var(--bg-color); color: var(--tech-blue); padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border-color); font-weight: bold; }
+        body.dark-mode .b-tag { background: #222; border-color: #444; color: #81d4fa; }
+        
+        /* 每日總計標籤 */
+        .b-total { font-family: 'Consolas', monospace; font-size: 0.85rem; background: #ffebee; color: #d93025; padding: 3px 8px; border-radius: 4px; border: 1px dashed #d93025; font-weight: 900; margin-left: auto; }
+        body.dark-mode .b-total { background: #4a1c1c; color: #ff8a80; border-color: #ff8a80; }
+
+        /* 預算面板 */
+        .budget-card {
+            width: 100%; max-width: 400px; background: var(--tech-blue-light); border: 2px dashed var(--tech-blue);
+            border-radius: 16px; padding: 20px; color: var(--text-main); box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-top: 10px;
+        }
+        .budget-title { font-size: 1.1rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px solid rgba(0, 91, 181, 0.2); padding-bottom: 8px; margin: 0 0 5px 0; display: flex; align-items: center; gap: 8px; }
+        .budget-row { display: flex; justify-content: space-between; font-size: 0.95rem; color: var(--text-sub); border-bottom: 1px dotted var(--border-color); padding-bottom: 5px; margin-bottom: 5px; font-family: 'Consolas', monospace; }
+        .budget-row span:first-child { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .budget-total { display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 900; color: #d93025; margin-top: 5px; padding-top: 10px; border-top: 2px solid var(--border-color); font-family: 'Consolas', monospace; }
+        .budget-note { font-size: 0.8rem; color: var(--text-sub); text-align: left; margin-top: 5px; opacity: 0.8; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -127,6 +152,13 @@
                 <span class="day-date">MAR 22 (FRI)</span>
                 <h2 class="day-title">DAY 01</h2>
                 <p class="day-sub">香港登陸戰 / 甘牌燒鵝 / 華姐清湯腩</p>
+                <div class="day-budget">
+                    <span class="b-tag">🚄 機快 $85</span>
+                    <span class="b-tag">🚖 的士 $41</span>
+                    <span class="b-tag">🚇 港鐵 $5</span>
+                    <span class="b-tag">🚃 叮叮 $6</span>
+                    <span class="b-total">小計 $137</span>
+                </div>
             </div>
             <span class="day-arrow">➔</span>
         </a>
@@ -136,6 +168,10 @@
                 <span class="day-date">MAR 23 (SAT)</span>
                 <h2 class="day-title">DAY 02</h2>
                 <p class="day-sub">九龍行軍 / 星光大道 / 女人街食飯公司</p>
+                <div class="day-budget">
+                    <span class="b-tag">🚇 港鐵 $39</span>
+                    <span class="b-total">小計 $39</span>
+                </div>
             </div>
             <span class="day-arrow">➔</span>
         </a>
@@ -145,6 +181,11 @@
                 <span class="day-date">MAR 24 (SUN)</span>
                 <h2 class="day-title">DAY 03</h2>
                 <p class="day-sub">迪士尼極限戰鬥 / 大排檔戰後補給</p>
+                <div class="day-budget">
+                    <span class="b-tag">🚖 的士 $125</span>
+                    <span class="b-tag">🚇 港鐵 $35</span>
+                    <span class="b-total">小計 $160</span>
+                </div>
             </div>
             <span class="day-arrow">➔</span>
         </a>
@@ -154,6 +195,11 @@
                 <span class="day-date">MAR 25 (MON)</span>
                 <h2 class="day-title">DAY 04</h2>
                 <p class="day-sub">港島巡禮 / 沾仔記 / 坤記炭火煲仔飯</p>
+                <div class="day-budget">
+                    <span class="b-tag">🚇 港鐵 $16</span>
+                    <span class="b-tag">🚃 叮叮 $3</span>
+                    <span class="b-total">小計 $19</span>
+                </div>
             </div>
             <span class="day-arrow">➔</span>
         </a>
@@ -163,9 +209,43 @@
                 <span class="day-date">MAR 26 (TUE)</span>
                 <h2 class="day-title">DAY 05</h2>
                 <p class="day-sub">終極撤退 / 六安居推車飲茶 / 歸途</p>
+                <div class="day-budget">
+                    <span class="b-tag">🚃 叮叮 $6</span>
+                    <span class="b-tag">🚖 Uber $20</span>
+                    <span class="b-tag">🚇 港鐵 $5</span>
+                    <span class="b-tag">🚄 機快 $85</span>
+                    <span class="b-total">小計 $116</span>
+                </div>
             </div>
             <span class="day-arrow">➔</span>
         </a>
+
+        <div class="budget-card">
+            <h3 class="budget-title">📊 行程總交通預算 (單人)</h3>
+            <div class="budget-row">
+                <span>🚇 港鐵 (MTR)</span>
+                <span>$100 HKD</span>
+            </div>
+            <div class="budget-row">
+                <span>🚖 Uber / 的士 (雙人均攤)</span>
+                <span>$186 HKD</span>
+            </div>
+            <div class="budget-row">
+                <span>🚃 叮叮車 (Tram)</span>
+                <span>$15 HKD</span>
+            </div>
+            <div class="budget-row">
+                <span>🚄 機場快線 (來回)</span>
+                <span>$170 HKD</span>
+            </div>
+            <div class="budget-total">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">總計預估 (HKD)</span>
+                <span>$471</span>
+            </div>
+            <div class="budget-note">
+                * 註: 上述為單人預估花費。機快(雙人套票)、Uber及的士皆已預設為雙人均攤計算，實際扣款依八達通與當下叫車為準。
+            </div>
+        </div>
     </div>
 
     <script>
