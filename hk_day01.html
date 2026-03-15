@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="common.css">
 </head>
 <body>
+
     <div class="sys-header">
         <div class="header-left">
             <a href="index.html?hub=1" class="theme-toggle" style="text-decoration: none; display: flex; align-items: center; justify-content: center;" title="回主選單大廳">🏠</a>
@@ -24,81 +25,102 @@
                 <span style="font-size: 0.9rem; color: var(--text-sub);">約合台幣：</span>
                 <span style="font-size: 1.3rem; font-weight: 900; color: #d93025; font-family: 'Consolas', monospace;"><span id="twd-output">0</span></span>
             </div>
-            <small id="rate-display" style="color:var(--text-sub); text-align: right; font-size: 0.75rem; display: block; margin-top: 4px;">準備獲取即時網路匯率...</small>
         </div>
 
-        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 260px;">
-            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">點到點導航雷達</div>
-            <div class="mtr-selectors">
-                <select id="mtr-origin">
-                    <optgroup label="港島線 (藍)">
-                        <option value="ISL-WAC" selected>灣仔</option>
-                        <option value="ISL-CEN">中環</option><option value="ISL-CAB">銅鑼灣</option>
-                        <option value="ISL-TIH">天后</option><option value="ISL-SYP">西營盤</option>
-                    </optgroup>
-                    <optgroup label="荃灣線 (紅)">
-                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK">旺角</option>
-                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
-                    </optgroup>
-                </select>
-                <span style="display:flex; align-items:center; color:var(--text-sub);">➔</span>
-                <select id="mtr-dest">
-                    <optgroup label="港島線 (藍)">
-                        <option value="ISL-WAC">灣仔</option><option value="ISL-CEN">中環</option>
-                        <option value="ISL-CAB">銅鑼灣</option><option value="ISL-TIH">天后</option>
-                        <option value="ISL-SYP">西營盤</option>
-                    </optgroup>
-                    <optgroup label="荃灣線 (紅)">
-                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK" selected>旺角</option>
-                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
-                    </optgroup>
-                </select>
+        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 280px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">港鐵全路網即時看板</div>
+            <div class="mtr-selectors" style="flex-direction: column; gap: 8px; margin-top: 10px;">
+                <select id="mtr-line-select" onchange="updateMTRStations()" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
+                <select id="mtr-sta-select" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
             </div>
-            <button onclick="scanGlobalMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;">📡 掃描路線</button>
-            <div id="mtr-result" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">距離下班車：</span><strong id="mtr-ttnt" style="color: #d93025; font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">上車時間：</span><strong id="mtr-board-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">--:--</strong></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">預估車程：</span><strong id="mtr-journey-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
-                <div style="display: flex; justify-content: space-between; align-items: center; background: var(--tech-blue-light); padding: 5px; border-radius: 4px;"><span style="color: var(--tech-blue); font-weight: bold; font-size: 0.9rem;">🎯 預計抵達：</span><strong id="mtr-arrive-time" style="color: var(--tech-blue); font-family: 'Consolas'; font-size: 1.3rem;">--:--</strong></div>
+            <button onclick="scanStationMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">📡 掃描月台動態</button>
+            <div id="mtr-result" style="display: none; flex-direction: column; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid var(--tech-blue);">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-up-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-up-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid #e65100;">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-down-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-down-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
             </div>
-            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 5px;">選擇起終點並點擊掃描</small>
+            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 8px;">選擇路線與車站</small>
         </div>
     </div>
 
     <div class="card-stack" id="stack" onclick="closeCurrencyPanel()">
+        
         <div class="card" data-start="00:00" data-end="11:50">
-            <span class="time">11:50 以前</span><h3 class="title">飛行與抵達</h3>
-            <div class="location-bar">HKG 香港國際機場 (一號客運大樓)</div>
+            <span class="time">11:50 以前</span>
+            <h3 class="title">飛行與抵達準備</h3>
+            <div class="location-bar">HKG 香港國際機場上空</div>
             <div class="desc">
-                班機準備著陸，系統時間同步中。
+                班機準備著陸，請把握機上最後時間填寫資料，落地後力求最速通關！
                 <div class="checklist">
-                    <div class="checklist-title">降落前檢核行動：</div>
-                    <label><input type="checkbox"> 護照 / 台胞證 / 電子港簽</label>
-                    <label><input type="checkbox"> 香港入境申報表 (若無港簽需填寫)</label>
-                    <label><input type="checkbox"> 手機更換 SIM 卡 / 開通 eSIM</label>
+                    <div class="checklist-title">🎒 降落前衝刺檢核：</div>
+                    <label><input type="checkbox"> <b>入境表：</b> 機上提早向空服員索取並填寫完畢 (若有港簽仍建議備著)。</label>
+                    <label><input type="checkbox"> <b>網路開通：</b> 換好實體 SIM 卡，或提早將 eSIM 設為主要數據並開啟漫遊。</label>
+                    <label><input type="checkbox"> <b>證件就位：</b> 護照、台胞證/電子港簽 (需印出紙本) 集中拿在手上。</label>
                 </div>
             </div>
         </div>
 
         <div class="card" data-start="11:50" data-end="13:00">
-            <span class="time">11:50 - 13:00</span><h3 class="title">入境、領行李、緩衝</h3>
+            <span class="time">11:50 - 13:00</span>
+            <h3 class="title">入境、領行李、緩衝</h3>
             <div class="location-bar">抵港大堂 (Arrival Hall)</div>
             <div class="desc">
-                跟隨頭頂「抵港/行李認領」黃色指標前進。<div class="info-group"><div class="tag-row"><span class="tag t-time">⏱ 耗時</span><p>預估通關與等行李約需 1 小時 10 分鐘。</p></div></div>
+                下機後跟隨頭頂「抵港/行李認領 (Arrivals)」的黃色指標快步前進。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-tip">💡 通關戰術</span><p>香港海關效率頗高，通關後抬頭看電子螢幕，尋找自己航班的<b>「行李轉盤號碼」</b>。</p></div>
+                    <div class="tag-row"><span class="tag t-time">⏱ 耗時預估</span><p>從下機、排隊海關到拿到行李，平均約需 50 分鐘至 1 小時 10 分鐘。</p></div>
+                </div>
             </div>
         </div>
 
         <div class="card" data-start="13:00" data-end="13:10">
-            <span class="time">13:00 - 13:10</span><h3 class="title">交通票券購入</h3>
+            <span class="time">13:00 - 13:10</span>
+            <h3 class="title">交通票券購入</h3>
             <div class="location-bar">接機大堂 A/B 區「客務中心」</div>
-            <div class="desc">出海關抵達大廳後，完全不需要上下樓層。</div>
+            <div class="desc">
+                出海關大門抵達接機大廳後，<b>完全不需要上下樓層</b>。
+                
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 機場室內動線</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">海關檢查 & 綠色免申報通道</div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                接機大堂 (Arrival Hall)
+                                <span class="p-sub">📍 目標：尋找大堂中央的「圓形客務中心」購買八達通或機場快線套票。</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                機場快線月台
+                                <span class="p-sub">👉 買完票後，往「正前方大門」直走即達月台，連逼卡都不用！</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-tip">⚠️ 避坑指南</span><p>若發現客務中心大排長龍，建議直接使用手機 <b>Klook 購買機場快線 QR Code</b>，可直接刷手機進站，省去排隊時間！</p></div>
+                </div>
+            </div>
         </div>
 
         <div class="card" data-start="13:10" data-end="13:35">
-            <span class="time">13:10 - 13:35</span><h3 class="title">搭乘機場快線</h3>
-            <div class="location-bar">往市區方向 (機場 ➔ 香港站)</div>
+            <span class="time">13:10 - 13:35</span>
+            <h3 class="title">搭乘機場快線 (AEL)</h3>
+            <div class="location-bar">機場站 ➔ 香港站</div>
             <div class="desc">
-                班次密集，每 10-15 分鐘一班車。車程極快，僅需 24 分鐘直達市區。
+                車程極快，僅需 24 分鐘直達港島市區。車內第一節與最後一節車廂配有 USB 充電座與免費 Wi-Fi。
                 
                 <div class="card-mtr-widget" data-from="AEL-AIR" data-to="AEL-HOK">
                     <div class="w-header">
@@ -114,46 +136,77 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div class="card" data-start="13:35" data-end="14:15">
-            <span class="time">13:35 - 14:15</span><h3 class="title">前往飯店 (轉乘)</h3>
-            <div class="location-bar">香港站的士站 (Taxi Stand)</div>
+            <span class="time">13:35 - 14:15</span>
+            <h3 class="title">轉乘的士前往飯店</h3>
+            <div class="location-bar">香港站 的士排班站 (Taxi Stand)</div>
             <div class="desc">
-                抵達香港站後，依循「的士 (Taxi)」指標前往排班處。
-                <div class="plan-b"><div class="plan-b-title">🚖 給司機看的地址 (可截圖/放大)</div><b style="font-size: 1.2rem; color: #111;">灣仔 皇后大道東 373號<br>英皇駿景酒店 (The Emperor Hotel)</b></div>
+                抵達香港站後，依循「的士 (Taxi)」指標前往排班處。港島區請搭乘<b>「紅色市區的士」</b>。
+                <div class="plan-b">
+                    <div class="plan-b-title">🚖 給司機看的地址 (請放大給司機看)</div>
+                    <b style="font-size: 1.3rem; color: #111;">灣仔 皇后大道東 373號<br>英皇駿景酒店<br><span style="font-size: 1rem; color: #666;">(The Emperor Hotel)</span></b>
+                </div>
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 車資預估</span><p>跳表約 $50 - $70 HKD。注意：<b>行李放後車廂每件需加收 $6 HKD</b>。備好百元或小鈔，司機通常不找千元大鈔。</p></div>
+                </div>
             </div>
             <a href="https://maps.google.com/?q=The+Emperor+Hotel+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航至飯店</a>
         </div>
 
         <div class="card" data-start="14:15" data-end="15:10">
-            <span class="time">14:15 - 15:10</span><h3 class="title">飯店入住與整頓</h3>
+            <span class="time">14:15 - 15:10</span>
+            <h3 class="title">飯店入住與整頓</h3>
             <div class="location-bar">英皇駿景酒店 LOBBY</div>
-            <div class="desc">辦理 Check-in 手續，卸下行李裝備。</div>
+            <div class="desc">
+                辦理 Check-in 手續，卸下沉重的行李裝備，準備輕裝上陣。
+                <div class="checklist">
+                    <div class="checklist-title">🏨 入房與出門確認：</div>
+                    <label><input type="checkbox"> <b>押金：</b> 準備一張信用卡給櫃檯刷空卡當作押金。</label>
+                    <label><input type="checkbox"> <b>轉接頭：</b> 檢查房內是否有「英規三角插座」，若無可向櫃檯借用。</label>
+                    <label><input type="checkbox"> <b>輕裝出門：</b> 護照鎖入保險箱，只帶隨身小包、八達通與足夠的港幣現金出發！</label>
+                </div>
+            </div>
         </div>
 
         <div class="card" data-start="15:10" data-end="17:20">
-            <span class="time">15:10 - 17:20</span><h3 class="title">甘牌燒鵝 (遲午餐)</h3>
+            <span class="time">15:10 - 17:20</span>
+            <h3 class="title">甘牌燒鵝 (遲午餐)</h3>
             <div class="location-bar">灣仔軒尼詩道226號</div>
-            <div class="desc">連續多年榮獲米其林一星，全港最火紅燒臘。<div class="info-group"><div class="tag-row"><span class="tag t-time">⏱ 耗時</span><p>抵達後第一件事：先去門口抽號碼牌！下午時段預估排隊 40-60 分鐘。</p></div></div></div>
+            <div class="desc">
+                米其林一星傳奇燒臘！因為不能訂位，抵達後<b>第一件事就是去門口找店員拿號碼牌</b>！
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">🍖 必點神菜</span><p><b>1. 燒鵝下庄：</b> 包含肥美鵝腿的下半部，油脂豐富表皮酥脆。<br><b>2. 肥燶叉燒：</b> 指定要「半肥瘦」帶點微焦，入口即化。<br><b>3. 凍檸茶：</b> 喝之前記得用湯匙狂戳底部的檸檬片把香味壓出來！</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 戰術指南</span><p>若抽完號碼牌發現要等超過 40 分鐘，可先至附近的「灣仔街市」或「利東街」散步，不要死守在門口浪費時間。</p></div>
+                </div>
+            </div>
             <a href="https://maps.google.com/?q=Kam's+Roast+Goose" target="_blank" class="nav-btn">開啟 GPS 導航至甘牌</a>
         </div>
 
         <div class="card" data-start="17:20" data-end="20:00">
-            <span class="time">17:20 - 20:00</span><h3 class="title">銅鑼灣小店巡禮</h3>
+            <span class="time">17:20 - 20:00</span>
+            <h3 class="title">銅鑼灣神級蛋撻與逛街</h3>
             <div class="location-bar">銅鑼灣商圈</div>
-            <div class="desc">飯後移動，主攻當紅烘焙神店與逛街。</div>
+            <div class="desc">
+                朝聖香港目前最火紅的兩大神級蛋撻！買完後可在銅鑼灣 (SOGO、時代廣場) 盡情逛街消化。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">🥐 Bakehouse</span><p><b>「酸種蛋撻 (Sourdough Egg Tart)」</b><br>📍 啟超道16號。<br>外殼像可頌般酥脆，內餡奶香極濃。強烈建議直接買一盒 (6顆) 帶回飯店當隔天早餐！</p></div>
+                    <div class="tag-row"><span class="tag t-star">🧁 Hashtag B</span><p><b>「拿破崙焦糖千層撻」</b><br>📍 利園山道73號。<br>獨創的花朵造型，底部有濃郁的焦糖醬，口感層次極度豐富。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">⚠️ 避坑</span><p>這兩家店通常大排長龍，且提早賣完就收攤。若不想提著重物逛街，建議買完找地方先吃掉幾顆。</p></div>
+                </div>
+            </div>
             <a href="https://maps.google.com/?q=Bakehouse+Causeway+Bay" target="_blank" class="nav-btn">開啟 GPS 導航至 Bakehouse</a>
         </div>
 
         <div class="card" data-start="20:00" data-end="21:35">
-            <span class="time">20:00 - 21:35</span><h3 class="title">華姐清湯腩 (晚餐)</h3>
-            <div class="location-bar">天后電氣道13號</div>
+            <span class="time">20:00 - 21:35</span>
+            <h3 class="title">華姐清湯腩 (晚餐)</h3>
+            <div class="location-bar">天后電氣道13號 (港鐵天后站 A2 出口對面)</div>
             <div class="desc">
-                米其林必比登推薦，湯頭用牛骨與多種藥材熬製。
-
+                米其林必比登推薦的清湯牛腩名店，湯頭清甜不膩口，完美溫暖你逛了一整個下午的胃。
+                
                 <div class="card-mtr-widget" data-from="ISL-CAB" data-to="ISL-TIH">
                     <div class="w-header">
                         <span class="w-title">🚇 戰術雷達：銅鑼灣 ➔ 天后</span>
@@ -169,26 +222,42 @@
                     </div>
                 </div>
 
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">🍜 推薦必點</span><p><b>1. 清湯牛腩河粉：</b> 牛腩軟嫩入味，河粉吸滿大骨與藥材熬製的精華高湯。<br><b>2. 淨蘿蔔：</b> 絕對必點的隱藏神菜！白蘿蔔吸飽了牛肉高湯，極度鮮甜多汁。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 點餐技巧</span><p>喜歡吃帶點油脂口感的，可以直接跟老闆點「崩沙腩」或「坑腩」(這兩個部位數量有限，晚上去可能賣完)。</p></div>
+                </div>
             </div>
             <a href="https://maps.google.com/?q=Sister+Wah+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航至華姐</a>
         </div>
 
         <div class="card" data-start="21:35" data-end="22:45">
-            <span class="time">21:35 - 22:45</span><h3 class="title">甜姨姨私房甜品</h3>
-            <div class="location-bar">天后清風街13號</div>
-            <div class="desc">體驗正宗香港人的夜生活：飯後糖水。</div>
+            <span class="time">21:35 - 22:45</span>
+            <h3 class="title">甜姨姨私房甜品 (宵夜)</h3>
+            <div class="location-bar">天后清風街13號 (從華姐步行 3 分鐘)</div>
+            <div class="desc">
+                體驗正宗香港人的夜生活：飯後吃「糖水」。這家店也是港劇迷必來朝聖的經典場景。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">🍨 推薦必點</span><p><b>1. 榴槤豆腐花：</b> 他們家的招牌，榴槤味極度濃郁，愛好者必點。<br><b>2. 芒果神冰：</b> 滿滿的鮮甜芒果果肉配上綿密的雪花冰，清爽解膩。<br><b>3. 芝麻糊豆腐花：</b> 溫潤順口，是不敢吃榴槤的好選擇。</p></div>
+                </div>
+            </div>
             <a href="https://maps.google.com/?q=Auntie+Sweet+Tin+Hau" target="_blank" class="nav-btn">開啟 GPS 導航至甜姨姨</a>
         </div>
 
         <div class="card" data-start="22:45" data-end="23:59">
-            <span class="time">22:45 - 23:30</span><h3 class="title">搭乘叮叮車回飯店</h3>
-            <div class="location-bar">上車點：琉璃街站 ➔ 皇后大道東</div>
-            <div class="desc">搭乘雙層電車，以最便宜浪漫的方式結束第一天。</div>
+            <span class="time">22:45 - 23:30</span>
+            <h3 class="title">搭乘叮叮車浪漫回飯店</h3>
+            <div class="location-bar">上車點：琉璃街站 ➔ 下車點：聯發街 或 汕頭街</div>
+            <div class="desc">
+                搭乘百年歷史的雙層電車「叮叮車」，以最便宜、最接地氣的方式結束第一天充實的行程。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">📸 體驗亮點</span><p>強烈建議直接爬上二樓，搶最前面的「車長視角」座位。晚風吹拂配上香港街頭霓虹燈，超級有電影感！</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 搭車必備常識</span><p>1. <b>辨識方向：</b> 車頭螢幕顯示往「堅尼地城、石塘咀、跑馬地」皆可搭乘 (往西行)。<br>2. <b>後門上車：</b> 上車直接走上去找位子，不需要刷卡。<br>3. <b>前門下車：</b> 下車時走到司機旁拍八達通卡，均一價 $3 HKD。</p></div>
+                </div>
+            </div>
             <a href="https://maps.google.com/?q=The+Emperor+Hotel+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航回飯店</a>
         </div>
 
     </div>
-
     <div class="controls">
         <button class="btn" id="btn-prev" title="上一個行程">⬅</button>
         <button class="btn btn-center" id="btn-now">📍 追蹤當前行程</button>
