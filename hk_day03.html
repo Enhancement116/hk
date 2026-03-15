@@ -4,144 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HKG_DAY_03 | 迪士尼極限戰鬥行程</title>
-    <style>
-        :root {
-            --bg-color: #f4f5f9;
-            --text-main: #111111; 
-            --text-sub: #444444;
-            --tech-blue: #005bb5; 
-            --tech-blue-light: rgba(0, 91, 181, 0.08);
-            --card-bg: #ffffff;
-            --border-color: #d1d5db;
-            --tag-time: #e3f2fd;
-            --tag-money: #fce4ec;
-            --tag-star: #fff8e1;
-            --tag-tip: #e8f5e9;
-            --plan-b-bg: #fff3e0;
-            --plan-b-border: #ffb74d;
-        }
-
-        /* 🌙 深色模式變數 */
-        body.dark-mode {
-            --bg-color: #121212; --text-main: #e0e0e0; --text-sub: #a0a0a0;
-            --card-bg: #1e1e1e; --border-color: #333333;
-            --tech-blue: #4da8da; --tech-blue-light: rgba(77, 168, 218, 0.15);
-            --tag-time: #1a365d; --tag-money: #4a148c; --tag-star: #f57f17; --tag-tip: #1b5e20;
-            --plan-b-bg: #3e2723; --plan-b-border: #ff9800;
-        }
-
-        body {
-            background-color: var(--bg-color); color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-            transition: background-color 0.3s ease;
-        }
-
-        /* 頂部資訊列 */
-        .sys-header {
-            padding: 12px 20px; background: var(--card-bg); border-bottom: 2px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center; z-index: 20; position: relative;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        h1 { font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main); letter-spacing: 0.5px; }
-        .theme-toggle { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; transition: all 0.2s; }
-        .theme-toggle:active { transform: scale(0.9); }
-        #live-clock { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: var(--tech-blue); background: var(--tech-blue-light); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(0, 91, 181, 0.2); }
-
-        /* 💱 即時匯率面板 (浮動) */
-        .currency-panel {
-            position: absolute; top: 65px; left: 15px; background: var(--card-bg);
-            border: 2px solid var(--tech-blue); border-radius: 12px; padding: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100;
-            display: none; flex-direction: column; gap: 10px; width: 230px;
-            transform-origin: top left; animation: scaleIn 0.2s ease-out forwards;
-        }
-        .currency-panel.show { display: flex; }
-        .currency-panel input { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1.1rem; width: 100%; box-sizing: border-box; background: var(--bg-color); color: var(--text-main); font-weight: bold; }
-        .currency-panel input:focus { outline: none; border-color: var(--tech-blue); }
-        
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-        /* 卡牌疊放區 */
-        .card-stack { flex-grow: 1; position: relative; display: flex; justify-content: center; align-items: center; perspective: 1000px; overflow: hidden; width: 100%; z-index: 1; }
-        .card {
-            position: absolute; width: 88%; max-width: 420px; height: 72vh; background: var(--card-bg);
-            border: 2px solid var(--border-color); border-radius: 20px; padding: 25px 22px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box;
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease, background 0.3s ease;
-            opacity: 0; pointer-events: none; transform: translateX(100%) scale(0.9) rotate(4deg); overflow-y: auto; -webkit-overflow-scrolling: touch;
-        }
-        .card::-webkit-scrollbar { width: 4px; }
-        .card::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-        
-        .card.active { opacity: 1; transform: translateX(0) scale(1) rotate(0deg); pointer-events: auto; border-color: var(--tech-blue); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); z-index: 5; }
-        .card.prev { transform: translateX(-100%) scale(0.9) rotate(-4deg); opacity: 0; z-index: 4; }
-
-        /* 排版樣式 */
-        .time { display: inline-block; font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 800; color: var(--tech-blue); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; }
-        .title { font-size: 1.65rem; font-weight: 800; margin: 0 0 10px 0; line-height: 1.35; color: var(--text-main); }
-        .location-bar { display: flex; align-items: center; font-size: 1.05rem; font-weight: 700; color: var(--text-sub); margin-bottom: 15px; background: var(--tech-blue-light); padding: 6px 10px; border-radius: 6px; }
-        .location-bar::before { content: '📍'; margin-right: 6px; }
-        .desc { font-size: 1.1rem; color: var(--text-sub); margin: 0; line-height: 1.7; flex-grow: 1; }
-
-        /* 🚀 戰術動線圖與時間軸 */
-        .indoor-map { margin: 15px 0; background: var(--bg-color); border: 1px dashed var(--tech-blue); border-radius: 8px; padding: 15px; position: relative; }
-        .indoor-map-title { font-family: 'Consolas', monospace; font-size: 0.95rem; color: var(--tech-blue); font-weight: bold; border-bottom: 1px solid rgba(0, 91, 181, 0.2); padding-bottom: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .indoor-map-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--tech-blue); animation: pulse 1.5s infinite; }
-        .path-container { display: flex; flex-direction: column; position: relative; padding-left: 10px; }
-        .path-node { display: flex; align-items: flex-start; gap: 15px; position: relative; padding-bottom: 20px; }
-        .path-node:not(:last-child)::before { content: ''; position: absolute; left: 7px; top: 20px; bottom: 0; width: 2px; background: var(--border-color); }
-        .p-dot { width: 16px; height: 16px; background: var(--card-bg); border: 3px solid var(--border-color); border-radius: 50%; z-index: 2; margin-top: 4px; }
-        .path-node.active .p-dot { border-color: var(--tech-blue); background: var(--tech-blue); box-shadow: 0 0 12px rgba(0, 91, 181, 0.4); transform: scale(1.2); }
-        .p-label { font-size: 1.05rem; font-weight: 600; color: var(--text-sub); line-height: 1.4; }
-        .path-node.active .p-label { color: var(--text-main); font-weight: 800; }
-        .p-sub { display: block; font-size: 0.95rem; font-weight: normal; color: var(--tech-blue); margin-top: 4px; }
-
-        /* 標籤與備案 */
-        .checklist { margin: 15px 0; padding: 12px 15px; background: var(--tech-blue-light); border: 1px solid var(--border-color); border-radius: 8px; }
-        .checklist-title { font-weight: 800; color: var(--text-main); margin-bottom: 8px; font-size: 1.05rem; }
-        .checklist label { display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 1.05rem; color: var(--text-sub); line-height: 1.4;}
-        .checklist input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; margin-top: 3px; flex-shrink: 0;}
-
-        .plan-b { margin-top: 15px; padding: 12px 15px; background: var(--plan-b-bg); border-left: 5px solid var(--plan-b-border); border-radius: 4px; font-size: 1.05rem; }
-        .plan-b-title { font-weight: 800; color: #e65100; margin-bottom: 5px; font-size: 1.05rem; display: flex; align-items: center; gap: 6px; }
-
-        .info-group { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .tag-row { display: flex; align-items: flex-start; gap: 10px; }
-        .tag { flex-shrink: 0; font-size: 0.95rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
-        .tag-row p { margin: 0; font-size: 1.05rem; line-height: 1.5; color: var(--text-main); }
-        .tag.t-time { background: var(--tag-time); color: #0277bd; }
-        .tag.t-money { background: var(--tag-money); color: #c2185b; }
-        .tag.t-star { background: var(--tag-star); color: #e65100; }
-        .tag.t-tip { background: var(--tag-tip); color: #2e7d32; }
-
-        body.dark-mode .tag.t-time { color: #81d4fa; }
-        body.dark-mode .tag.t-money { color: #f48fb1; }
-        body.dark-mode .tag.t-star { color: #ffcc80; }
-        body.dark-mode .tag.t-tip { color: #a5d6a7; }
-
-        /* 底部操作按鈕 */
-        .controls { padding: 15px 20px 25px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-top: 1px solid var(--border-color); z-index: 10; transition: background 0.3s ease; }
-        .btn { width: 65px; height: 65px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; font-size: 1.6rem; color: var(--text-sub); cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-        .btn:active { transform: scale(0.9); }
-        .btn-center { flex-grow: 1; margin: 0 15px; height: 55px; border-radius: 27px; font-size: 1.15rem; border-color: var(--tech-blue); color: var(--tech-blue); font-weight: 800; }
-        .btn-center:active { background: var(--tech-blue); color: #fff; }
-
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-    </style>
+    <link rel="stylesheet" href="common.css">
 </head>
 <body>
-
     <div class="sys-header">
         <div class="header-left">
             <a href="index.html?hub=1" class="theme-toggle" style="text-decoration: none; display: flex; align-items: center; justify-content: center;" title="回主選單大廳">🏠</a>
+            <button class="theme-toggle" id="btn-mtr" onclick="toggleMTR()" title="港鐵即時雷達">🚇</button>
             <button class="theme-toggle" id="btn-currency" onclick="toggleCurrency()" title="開啟匯率換算">💱</button>
             <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="切換深淺色">🌞</button>
             <h1>DAY_03 迪士尼極限</h1>
         </div>
         <span id="live-clock">00:00:00</span>
-
+        
         <div id="currency-panel" class="currency-panel">
             <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">匯率換算 (HKD ➔ TWD)</div>
             <input type="number" id="hkd-input" placeholder="輸入 HKD 金額" oninput="calcCurrency()">
@@ -149,334 +24,159 @@
                 <span style="font-size: 0.9rem; color: var(--text-sub);">約合台幣：</span>
                 <span style="font-size: 1.3rem; font-weight: 900; color: #d93025; font-family: 'Consolas', monospace;"><span id="twd-output">0</span></span>
             </div>
-            <small id="rate-display" style="color:var(--text-sub); text-align: right; font-size: 0.75rem; display: block; margin-top: 4px;">準備獲取即時網路匯率...</small>
+        </div>
+
+        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 260px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">點到點導航雷達</div>
+            <div class="mtr-selectors">
+                <select id="mtr-origin">
+                    <optgroup label="港島線 (藍)">
+                        <option value="ISL-WAC" selected>灣仔</option>
+                        <option value="ISL-CEN">中環</option><option value="ISL-CAB">銅鑼灣</option>
+                        <option value="ISL-TIH">天后</option><option value="ISL-SYP">西營盤</option>
+                    </optgroup>
+                    <optgroup label="荃灣線 (紅)">
+                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK">旺角</option>
+                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
+                    </optgroup>
+                </select>
+                <span style="display:flex; align-items:center; color:var(--text-sub);">➔</span>
+                <select id="mtr-dest">
+                    <optgroup label="港島線 (藍)">
+                        <option value="ISL-WAC">灣仔</option><option value="ISL-CEN">中環</option>
+                        <option value="ISL-CAB">銅鑼灣</option><option value="ISL-TIH">天后</option>
+                        <option value="ISL-SYP">西營盤</option>
+                    </optgroup>
+                    <optgroup label="荃灣線 (紅)">
+                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK" selected>旺角</option>
+                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
+                    </optgroup>
+                </select>
+            </div>
+            <button onclick="scanGlobalMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;">📡 掃描路線</button>
+            <div id="mtr-result" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">距離下班車：</span><strong id="mtr-ttnt" style="color: #d93025; font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">上車時間：</span><strong id="mtr-board-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">--:--</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">預估車程：</span><strong id="mtr-journey-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: var(--tech-blue-light); padding: 5px; border-radius: 4px;"><span style="color: var(--tech-blue); font-weight: bold; font-size: 0.9rem;">🎯 預計抵達：</span><strong id="mtr-arrive-time" style="color: var(--tech-blue); font-family: 'Consolas'; font-size: 1.3rem;">--:--</strong></div>
+            </div>
+            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 5px;">選擇起終點並點擊掃描</small>
         </div>
     </div>
 
     <div class="card-stack" id="stack" onclick="closeCurrencyPanel()">
         
         <div class="card" data-start="00:00" data-end="08:30">
-            <span class="time">07:40 - 08:30</span>
-            <h3 class="title">整備與戰術機動</h3>
+            <span class="time">07:40 - 08:30</span><h3 class="title">整備與戰術機動</h3>
             <div class="location-bar">灣仔英皇駿景酒店 ➔ 迪士尼大門</div>
-            <div class="desc">
-                極限戰鬥開始！強烈建議叫 Uber 或計程車直達，車程約 35-40 分鐘，在車上爭取時間補眠。
-                <div class="checklist">
-                    <div class="checklist-title">🎒 戰備物資最終確認：</div>
-                    <label><input type="checkbox"> 3 個預先買好的麵包 (極重要，園區餐廳耗時太長)</label>
-                    <label><input type="checkbox"> 足夠的飲用水 (園內水極貴)</label>
-                    <label><input type="checkbox"> 充飽的行動電源與線材</label>
-                </div>
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-money">💰 的士/Uber</span><p>單趟預估約 $250 HKD (雙人均攤約 $125 HKD)。若搭港鐵需轉乘 3 次，建議直接叫車保留體力。</p></div>
-                </div>
-            </div>
+            <div class="desc">建議叫 Uber 或計程車直達，車程約 35-40 分鐘。</div>
         </div>
 
         <div class="card" data-start="08:30" data-end="09:00">
-            <span class="time">08:30 - 09:00</span>
-            <h3 class="title">安檢突破與提早入園</h3>
+            <span class="time">08:30 - 09:00</span><h3 class="title">安檢突破與提早入園</h3>
             <div class="location-bar">迪士尼正門安檢區</div>
-            <div class="desc">
-                抵達大門後立刻進行包包安檢，準備出示「提早入園憑證」。這完整的<b>黃金 1 小時</b>（通常比正式開園早一小時）是拉開與一般遊客差距的絕對關鍵！
-                <div class="plan-b">
-                    <div class="plan-b-title">⚠️ 安檢注意事項</div>
-                    包包所有拉鍊請先全開。自拍棒若超過規定長度可能會被關切，腳架嚴禁入園。
-                </div>
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-tip">⚡ 補給</span><p>排隊等待安檢的空檔，立刻吞下<b>【第 1 個麵包】</b>補充體力。</p></div>
-                </div>
-            </div>
+            <div class="desc">抵達大門後立刻進行包包安檢，準備出示「提早入園憑證」。</div>
         </div>
-
+        
         <div class="card" data-start="09:00" data-end="10:00">
-            <span class="time">09:00 - 10:00</span>
-            <h3 class="title">區域 1：魔雪奇緣世界</h3>
+            <span class="time">09:00 - 10:00</span><h3 class="title">區域 1：魔雪奇緣世界</h3>
             <div class="location-bar">樂園右後方 (新園區)</div>
-            <div class="desc">
-                提早入園的黃金一小時全砸在這裡！入園後走到城堡前，<b>果斷向右轉</b>直衝阿德爾王國。
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-star">🎢 玩</span><p>首要目標：「雪嶺滑雪橇」！因為設施時間極短、排隊極慢，請趁沒人時<b>連刷 2 次</b>！接著排「魔雪奇幻之旅」。</p></div>
-                    <div class="tag-row"><span class="tag t-time">📸 拍</span><p>09:45 左右設施玩完後，大批一般遊客才剛走到這裡。趁亂在小鎮鐘樓與友誼噴泉拍無人空景合照。</p></div>
-                </div>
-            </div>
+            <div class="desc">提早入園的黃金一小時全砸在這裡！</div>
         </div>
-
+        
         <div class="card" data-start="10:00" data-end="11:30">
-            <span class="time">10:00 - 11:30</span>
-            <h3 class="title">區域 2：反斗奇兵大本營</h3>
+            <span class="time">10:00 - 11:30</span><h3 class="title">區域 2：反斗奇兵大本營</h3>
             <div class="location-bar">樂園左後方</div>
-            <div class="desc">
-                離開魔雪奇緣，橫穿樂園左移，趁下午人潮爆炸前清空無 DPA 的熱門設施。
-                <div class="indoor-map">
-                    <div class="indoor-map-title">TACTICAL ROUTE: 設施攻略順序</div>
-                    <div class="path-container">
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">1. 沖天遙控車 (U型雲霄飛車)
-                                <span class="p-sub">⚠️ 刺激度高，無 DPA，務必優先排！</span>
-                            </div>
-                        </div>
-                        <div class="path-node active">
-                            <div class="p-dot"></div>
-                            <div class="p-label">
-                                2. 玩具兵團跳降傘
-                                <span class="p-sub">🪂 溫和版大怒神，可在高空俯瞰園區。</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="desc">趁下午人潮爆炸前清空無 DPA 的熱門設施。</div>
         </div>
 
         <div class="card" data-start="11:30" data-end="12:00">
-            <span class="time">11:30 - 12:00</span>
-            <h3 class="title">區域 3：探險世界</h3>
+            <span class="time">11:30 - 12:00</span><h3 class="title">區域 3：探險世界</h3>
             <div class="location-bar">樂園左下方</div>
-            <div class="desc">
-                順路往下方移動，進行早上的「動態恢復」階段，讓不斷走路的雙腿休息。
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-star">🎢 玩</span><p>搭乘「森林河流之旅」遊船。這是極佳的休息設施。</p></div>
-                </div>
-                <div class="plan-b">
-                    <div class="plan-b-title">💡 語音通道選擇技巧</div>
-                    排隊入口會分為「廣東話」、「普通話」、「英語」三道。通常「英語」或「普通話」的排隊人數較少，前進速度最快！
-                </div>
-            </div>
+            <div class="desc">搭乘「森林河流之旅」遊船。</div>
         </div>
 
         <div class="card" data-start="12:00" data-end="13:00">
-            <span class="time">12:00 - 13:00</span>
-            <h3 class="title">獅子王慶典 (大秀)</h3>
+            <span class="time">12:00 - 13:00</span><h3 class="title">獅子王慶典 (大秀)</h3>
             <div class="location-bar">探險世界：原野劇場</div>
-            <div class="desc">
-                全園水準最高的大型百老匯式歌舞秀，時長約 30 分鐘，吹冷氣回血的完美選擇。
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-tip">⚡ 補給</span><p>12:00 抵達排隊等候進場時，吃掉<b>【第 2 個麵包】</b>當作午餐。</p></div>
-                    <div class="tag-row"><span class="tag t-star">👀 座位提示</span><p>入場後不需要搶第一排，建議坐在<b>中高排數</b>，視野最好，能看清所有花車與大型道具的走位。</p></div>
-                </div>
-            </div>
+            <div class="desc">全園水準最高的大型百老匯式歌舞秀。</div>
         </div>
 
         <div class="card" data-start="13:00" data-end="14:30">
-            <span class="time">13:00 - 14:30</span>
-            <h3 class="title">城堡美照與 VIP 派對</h3>
+            <span class="time">13:00 - 14:30</span><h3 class="title">城堡美照與 VIP 派對</h3>
             <div class="location-bar">奇妙夢想城堡前方廣場</div>
-            <div class="desc">
-                午後的重頭戲！請嚴格遵守以下時間節點行動：
-                <div class="indoor-map" style="margin-top: 20px;">
-                    <div class="indoor-map-title">TIME SCHEDULE: 午間行動序列</div>
-                    <div class="path-container">
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">13:00 | 順光極限拍攝
-                                <span class="p-sub">📸 此時陽光直射城堡正面，天空最藍，請把握時間瘋狂連拍合照與個人照。</span>
-                            </div>
-                        </div>
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">13:40 | VIP 專區報到
-                                <span class="p-sub">🎟️ 提早 20 分鐘前往城堡前方的專屬觀賞區，出示憑證入場站定好位置。</span>
-                            </div>
-                        </div>
-                        <div class="path-node active">
-                            <div class="p-dot"></div>
-                            <div class="p-label">14:00 | 迪士尼尋夢奇緣
-                                <span class="p-sub">🎭 戶外城堡派演出！角色幾乎就在你面前跳舞，強烈建議直接錄影捕捉互動瞬間。</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="desc">午後的重頭戲！請嚴格遵守時間節點行動。</div>
         </div>
 
         <div class="card" data-start="14:30" data-end="16:00">
-            <span class="time">14:30 - 16:00</span>
-            <h3 class="title">區域 4：灰熊山谷 & 迷離莊園</h3>
+            <span class="time">14:30 - 16:00</span><h3 class="title">區域 4：灰熊山谷 & 迷離莊園</h3>
             <div class="location-bar">樂園左側深處</div>
-            <div class="desc">
-                趁看完秀的空檔往回走，清空左半部最後兩個大設施。此時人潮已達巔峰，全面啟動 <b>DPA (尊享卡)</b> 橫掃模式！
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-money">⚡ DPA 1</span><p><b>「灰熊山極速礦車」</b>：全園最好玩的室外過山車，中後段會有「無預警倒退嚕」，極度刺激！</p></div>
-                    <div class="tag-row"><span class="tag t-money">⚡ DPA 2</span><p><b>「迷離大宅」</b>：全球迪士尼獨家！無軌道室內車，跟隨猴子阿拔穿梭奇幻博物館，視覺特效滿分。</p></div>
-                </div>
-            </div>
+            <div class="desc">全面啟動 DPA (尊享卡) 橫掃模式！</div>
         </div>
 
         <div class="card" data-start="16:00" data-end="17:00">
-            <span class="time">16:00 - 17:00</span>
-            <h3 class="title">區域 5：明日世界 & 魔雪二刷</h3>
+            <span class="time">16:00 - 17:00</span><h3 class="title">區域 5：明日世界 & 魔雪二刷</h3>
             <div class="location-bar">樂園右側</div>
-            <div class="desc">
-                長途奔襲橫跨樂園到右側，繼續以金錢換取時間 (DPA碾壓)。
-                <div class="indoor-map">
-                    <div class="indoor-map-title">TACTICAL ROUTE: 下午半場掃蕩</div>
-                    <div class="path-container">
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">明日世界 DPA 選擇
-                                <span class="p-sub">刺激派選「星戰極速穿梭」；溫和派選「鐵甲奇俠飛行之旅」。</span>
-                            </div>
-                        </div>
-                        <div class="path-node active">
-                            <div class="p-dot"></div>
-                            <div class="p-label">
-                                重返魔雪奇緣
-                                <span class="p-sub">❄️ 使用 DPA 二刷早上最喜歡的冰雪設施。</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="desc">繼續以金錢換取時間 (DPA碾壓)。</div>
         </div>
 
         <div class="card" data-start="17:00" data-end="18:15">
-            <span class="time">17:00 - 18:15</span>
-            <h3 class="title">美國小鎮大街 (黃昏)</h3>
+            <span class="time">17:00 - 18:15</span><h3 class="title">美國小鎮大街 (黃昏)</h3>
             <div class="location-bar">入口處主街</div>
-            <div class="desc">
-                進入攝影的「魔幻時刻 (Magic Hour)」，小鎮大街的復古建築在夕陽下立體感極佳。
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-time">📸 拍</span><p>找尋兩側沒有人的櫥窗或路燈旁，利用金黃色逆光拍攝極具歐美懷舊氛圍的人像。</p></div>
-                    <div class="tag-row"><span class="tag t-tip">⚡ 補給</span><p>拍照告一段落，吃掉最後的<b>【第 3 個麵包】</b>。因為接下來將一路戰鬥到煙火結束，沒有時間進食了。</p></div>
-                </div>
-            </div>
+            <div class="desc">進入攝影的「魔幻時刻 (Magic Hour)」。</div>
         </div>
 
         <div class="card" data-start="18:15" data-end="19:30">
-            <span class="time">18:15 - 19:30</span>
-            <h3 class="title">迪士尼魔法書房</h3>
+            <span class="time">18:15 - 19:30</span><h3 class="title">迪士尼魔法書房</h3>
             <div class="location-bar">幻想世界：迪士尼故事劇場</div>
-            <div class="desc">
-                全園最感人、音樂最好聽的室內劇場大作。
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-star">🎟️ 18:15 報到</span><p>找到 VIP 專屬通道提前報到入場。</p></div>
-                    <div class="tag-row"><span class="tag t-star">🎭 18:45 看秀</span><p>這場秀會把多部經典迪士尼動畫串連在一起，舞台機關與聲光效果極度華麗，坐下好好享受 30 分鐘。</p></div>
-                </div>
-            </div>
+            <div class="desc">全園最感人、音樂最好聽的室內劇場大作。</div>
         </div>
 
         <div class="card" data-start="19:30" data-end="20:00">
-            <span class="time">19:30 - 20:00</span>
-            <h3 class="title">幻想世界夜拍極限</h3>
+            <span class="time">19:30 - 20:00</span><h3 class="title">幻想世界夜拍極限</h3>
             <div class="location-bar">幻想世界廣場</div>
-            <div class="desc">
-                煙火施放前的最後 30 分鐘，多數遊客已前往城堡前佔位，此時是解鎖絕美夜景的黃金窗口！
-                <div class="indoor-map" style="margin-top: 20px;">
-                    <div class="indoor-map-title">TACTICAL ROUTE: 夜拍空間動線</div>
-                    <div class="path-container">
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">第一站：灰姑娘旋轉木馬
-                                <span class="p-sub">🎠 全部點亮金黃色燈泡，站在木馬外圍利用景深拍攝，畫面超級夢幻。</span>
-                            </div>
-                        </div>
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">第二站：瘋帽子旋轉杯
-                                <span class="p-sub">☕ 上方的彩色紙燈籠亮起，充滿愛麗絲夢遊仙境獨有的詭譎與奇幻感。</span>
-                            </div>
-                        </div>
-                        <div class="path-node active">
-                            <div class="p-dot"></div>
-                            <div class="p-label">第三站：魔雪奇緣夜間噴泉
-                                <span class="p-sub">❄️ 噴泉會打上冰藍色的燈光，與白天的氣氛截然不同，極度浪漫。</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="desc">解鎖絕美夜景的黃金窗口！</div>
         </div>
 
         <div class="card" data-start="20:00" data-end="20:50">
-            <span class="time">20:00 - 20:50</span>
-            <h3 class="title">星夢光影之旅 (夜間大秀)</h3>
+            <span class="time">20:00 - 20:50</span><h3 class="title">星夢光影之旅 (夜間大秀)</h3>
             <div class="location-bar">奇妙夢想城堡前方</div>
-            <div class="desc">
-                今日極限戰鬥的最高潮，結合水舞、雷射、光雕投影與煙火的史詩級表演！
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-star">🎟️ 20:00 就位</span><p>提早抵達 VIP 專屬觀賞區。站定第一排絕佳位置，確保前方沒有人舉手機擋住視線。</p></div>
-                    <div class="tag-row"><span class="tag t-star">🎆 20:30 施放</span><p>這場秀長達 20 分鐘，強烈建議手持錄影或用廣角連拍，視覺衝擊極強，保證看到起雞皮疙瘩！</p></div>
-                </div>
-            </div>
+            <div class="desc">今日極限戰鬥的最高潮，結合水舞、雷射、光雕投影與煙火的史詩級表演！</div>
         </div>
 
         <div class="card" data-start="20:50" data-end="21:45">
-            <span class="time">20:50 - 21:45</span>
-            <h3 class="title">終極大爆買與市區機動</h3>
+            <span class="time">20:50 - 21:45</span><h3 class="title">終極大爆買與市區機動</h3>
             <div class="location-bar">美國小鎮大街 ➔ 港鐵深水埗站</div>
-            <div class="desc">
-                煙火結束後逆流進入小鎮大街的商店，將伴手禮一次買齊，隨後搭乘地鐵前往深水埗吃遲晚餐！
-                <div class="indoor-map" style="margin-top: 20px;">
-                    <div class="indoor-map-title">TACTICAL ROUTE: 往深水埗動線</div>
-                    <div class="path-container">
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">迪士尼線 (粉紅線)
-                                <span class="p-sub">由迪士尼站搭乘至「欣澳站」。</span>
-                            </div>
-                        </div>
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">東涌線 轉 荃灣線
-                                <span class="p-sub">欣澳站換乘東涌線至「荔景站」，再同站換乘荃灣線南下。</span>
-                            </div>
-                        </div>
-                        <div class="path-node active">
-                            <div class="p-dot"></div>
-                            <div class="p-label">抵達「深水埗站」
-                                <span class="p-sub">📍 出站準備前往大排檔進行戰後能量大補給。</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>長途段 (迪士尼 ➔ 深水埗)：單人八達通約 $20 HKD。</p></div>
-                </div>
-            </div>
+            <div class="desc">煙火結束後逆流進入小鎮大街的商店，將伴手禮一次買齊，隨後搭乘地鐵前往深水埗吃遲晚餐！</div>
         </div>
 
         <div class="card" data-start="21:45" data-end="22:45">
-            <span class="time">21:45 - 22:45</span>
-            <h3 class="title">戰後大補給 (遲晚餐)</h3>
+            <span class="time">21:45 - 22:45</span><h3 class="title">戰後大補給 (遲晚餐)</h3>
             <div class="location-bar">深水埗：愛文生 或 萬發海鮮</div>
-            <div class="desc">
-                消耗了一整天的體力，用香港最道地、最有鑊氣的大排檔來犒賞自己！用餐預抓 1 小時。
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-star">⭐ 愛文生</span><p><b>經典露天大排檔氣氛！</b>必點：「黑胡椒薯仔牛柳粒」、「沙嗲肥牛粉絲煲」。</p></div>
-                    <div class="tag-row"><span class="tag t-star">⭐ 萬發海鮮</span><p><b>在地人極推的室內熱炒！</b>必點：招牌「風沙雞」、「拔絲咕嚕肉」。</p></div>
-                    <div class="tag-row"><span class="tag t-tip">💡 提示</span><p>兩家距離不遠，建議先看哪家不用排隊就吃哪家。大排檔環境較接地氣，建議備妥現金結帳。</p></div>
-                </div>
-            </div>
+            <div class="desc">消耗了一整天的體力，用香港最道地、最有鑊氣的大排檔來犒賞自己！</div>
         </div>
 
         <div class="card" data-start="22:45" data-end="23:59">
-            <span class="time">22:45 - 23:59</span>
-            <h3 class="title">滿載而歸 (返回酒店)</h3>
+            <span class="time">22:45 - 23:59</span><h3 class="title">滿載而歸 (返回酒店)</h3>
             <div class="location-bar">深水埗 ➔ 灣仔英皇駿景酒店</div>
             <div class="desc">
                 吃飽喝足，提著滿滿的迪士尼戰利品與填飽的肚子，過海返回灣仔酒店，完美結束這場極限戰鬥！
-                <div class="indoor-map" style="margin-top: 20px;">
-                    <div class="indoor-map-title">TACTICAL ROUTE: 過海回營</div>
-                    <div class="path-container">
-                        <div class="path-node">
-                            <div class="p-dot"></div>
-                            <div class="p-label">方案A：搭乘港鐵 (省錢)
-                                <span class="p-sub">🚇 深水埗站搭荃灣線至「金鐘」，換乘港島線 1 站至「灣仔站」，步行回酒店。</span>
-                            </div>
-                        </div>
-                        <div class="path-node active">
-                            <div class="p-dot"></div>
-                            <div class="p-label">方案B：Uber / 的士 (省力)
-                                <span class="p-sub">🚖 戰鬥一整天雙腿已廢，若戰利品過多，建議直接叫車過海回飯店（需加收過海隧道費）。</span>
-                            </div>
+                
+                <div class="card-mtr-widget" data-from="TWL-SSP" data-to="ISL-WAC">
+                    <div class="w-header">
+                        <span class="w-title">🚇 戰術雷達：深水埗 ➔ 灣仔</span>
+                        <button class="w-btn" onclick="scanCardMTR(this)">掃描班次</button>
+                    </div>
+                    <div class="w-result">
+                        <div class="w-row"><span>預估車程：</span><span class="w-val j-time">--</span></div>
+                        <div class="w-row"><span>下一班車：</span><span class="w-val n-train" style="color:#d93025;">--</span></div>
+                        <div class="w-row" style="border-top:1px solid rgba(0,0,0,0.1); padding-top:8px;">
+                            <span style="color:var(--tech-blue); font-weight:bold;">🎯 預計抵達：</span>
+                            <span class="w-val a-time" style="color:var(--tech-blue); font-size: 1.3rem;">--:--</span>
                         </div>
                     </div>
                 </div>
-                <div class="info-group">
-                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>過海段 (深水埗 ➔ 灣仔)：單人八達通約 $15 HKD。</p></div>
-                    <div class="tag-row"><span class="tag t-money">💰 備案: 的士</span><p>若搭的士過海，含隧道費單趟約 $120-$150 HKD (均攤約 $60-$75 HKD)。</p></div>
-                </div>
+
             </div>
         </div>
 
@@ -488,124 +188,6 @@
         <button class="btn" id="btn-next" title="下一個行程">➡</button>
     </div>
 
-    <script>
-        const cards = document.querySelectorAll('.card');
-        const stack = document.getElementById('stack');
-        const currencyPanel = document.getElementById('currency-panel');
-        let currentIndex = 0;
-
-        // --- 💱 即時網路匯率核心邏輯 ---
-        let currentRate = 4.1; // 預設安全匯率 (Offline Fallback)
-        let isRateFetched = false;
-
-        async function fetchRealTimeRate() {
-            if (isRateFetched) return; 
-            
-            const rateDisplay = document.getElementById('rate-display');
-            rateDisplay.textContent = '🔄 正在獲取最新網路匯率...';
-            rateDisplay.style.color = 'var(--tech-blue)';
-
-            try {
-                const response = await fetch('https://open.er-api.com/v6/latest/HKD');
-                const data = await response.json();
-
-                if (data && data.rates && data.rates.TWD) {
-                    currentRate = data.rates.TWD; 
-                    isRateFetched = true;
-                    rateDisplay.textContent = `✅ 最新匯率 1 HKD = ${currentRate.toFixed(2)} TWD`;
-                    rateDisplay.style.color = '#2e7d32'; 
-                    calcCurrency(); 
-                } else {
-                    throw new Error("API 格式不符");
-                }
-            } catch (error) {
-                console.error("即時匯率抓取失敗，退回預設值：", error);
-                rateDisplay.textContent = `⚠️ 處於離線狀態，使用預設匯率 1 : 4.1`;
-                rateDisplay.style.color = '#d93025'; 
-            }
-        }
-
-        function toggleCurrency() {
-            currencyPanel.classList.toggle('show');
-            if(currencyPanel.classList.contains('show')) {
-                document.getElementById('hkd-input').focus();
-                fetchRealTimeRate(); 
-            }
-        }
-        
-        function closeCurrencyPanel() {
-            if(currencyPanel.classList.contains('show')) {
-                currencyPanel.classList.remove('show');
-            }
-        }
-
-        function calcCurrency() {
-            const hkd = document.getElementById('hkd-input').value;
-            document.getElementById('twd-output').textContent = hkd ? Math.round(hkd * currentRate) : 0;
-        }
-
-        // --- 核心導覽邏輯 ---
-        function timeToMins(timeStr) {
-            let parts = timeStr.split(':');
-            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-        }
-
-        function updateSystemData() {
-            const now = new Date();
-            const timeString = String(now.getHours()).padStart(2, '0') + ':' + 
-                               String(now.getMinutes()).padStart(2, '0') + ':' + 
-                               String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('live-clock').textContent = timeString;
-        }
-
-        function getActiveIndexByTime() {
-            const now = new Date();
-            const nowMins = now.getHours() * 60 + now.getMinutes();
-            let targetIndex = cards.length - 1; 
-            for (let i = 0; i < cards.length; i++) {
-                if (nowMins >= timeToMins(cards[i].dataset.start) && nowMins < timeToMins(cards[i].dataset.end)) {
-                    targetIndex = i; break;
-                }
-            }
-            return targetIndex;
-        }
-
-        function renderCards() {
-            cards.forEach((card, index) => {
-                card.classList.remove('active', 'prev');
-                if (index === currentIndex) { card.classList.add('active'); card.scrollTop = 0; } 
-                else if (index < currentIndex) { card.classList.add('prev'); }
-            });
-            closeCurrencyPanel();
-        }
-
-        function goNext() { if (currentIndex < cards.length - 1) { currentIndex++; renderCards(); } }
-        function goPrev() { if (currentIndex > 0) { currentIndex--; renderCards(); } }
-        function jumpToNow() { currentIndex = getActiveIndexByTime(); renderCards(); }
-
-        document.getElementById('btn-next').addEventListener('click', goNext);
-        document.getElementById('btn-prev').addEventListener('click', goPrev);
-        document.getElementById('btn-now').addEventListener('click', jumpToNow);
-
-        // 滑動偵測
-        let touchStartX = 0, touchStartY = 0;
-        stack.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
-        stack.addEventListener('touchend', e => {
-            let diffX = touchStartX - e.changedTouches[0].screenX;
-            let diffY = Math.abs(touchStartY - e.changedTouches[0].screenY);
-            if (diffY > Math.abs(diffX) && diffY > 50) return;
-            if (diffX > 50) goNext(); else if (diffX < -50) goPrev();
-        }, {passive: true});
-
-        updateSystemData(); setInterval(updateSystemData, 1000); jumpToNow();
-
-        // --- 🌙 深色模式邏輯 ---
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const btn = document.getElementById('theme-btn');
-            btn.textContent = document.body.classList.contains('dark-mode') ? '🌜' : '🌞';
-            closeCurrencyPanel();
-        }
-    </script>
+    <script src="common.js" defer></script>
 </body>
 </html>

@@ -4,132 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HKG_OPERATION | 香港行軍總署</title>
-    
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        // 如果網址帶有 ?hub=1，則強制停留在主選單不跳轉
-        if (!urlParams.get('hub')) {
-            const today = new Date();
-            const m = today.getMonth() + 1; // JavaScript 月份從 0 開始
-            const d = today.getDate();
-            
-            // 判斷 3/22 ~ 3/26 自動導航
-            if (m === 3) {
-                if (d === 22) window.location.replace('hk_day01.html');
-                if (d === 23) window.location.replace('hk_day02.html');
-                if (d === 24) window.location.replace('hk_day03.html');
-                if (d === 25) window.location.replace('hk_day04.html');
-                if (d === 26) window.location.replace('hk_day05.html');
-            }
-        }
-    </script>
-
-    <style>
-        :root {
-            --bg-color: #f4f5f9;
-            --text-main: #111111; 
-            --text-sub: #444444;
-            --tech-blue: #005bb5; 
-            --tech-blue-light: rgba(0, 91, 181, 0.08);
-            --card-bg: #ffffff;
-            --border-color: #d1d5db;
-        }
-
-        /* 🌙 深色模式變數 */
-        body.dark-mode {
-            --bg-color: #121212; --text-main: #e0e0e0; --text-sub: #a0a0a0;
-            --card-bg: #1e1e1e; --border-color: #333333;
-            --tech-blue: #4da8da; --tech-blue-light: rgba(77, 168, 218, 0.15);
-        }
-
-        body {
-            background-color: var(--bg-color); color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-            transition: background-color 0.3s ease;
-        }
-
-        /* 頂部資訊列 */
-        .sys-header {
-            padding: 12px 20px; background: var(--card-bg); border-bottom: 2px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center; z-index: 20; position: relative;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        h1 { font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main); letter-spacing: 0.5px; }
-        .theme-toggle { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; transition: all 0.2s; }
-        .theme-toggle:active { transform: scale(0.9); }
-        #live-clock { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: var(--tech-blue); background: var(--tech-blue-light); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(0, 91, 181, 0.2); }
-
-        /* 💱 即時匯率面板 (浮動) */
-        .currency-panel {
-            position: absolute; top: 65px; left: 15px; background: var(--card-bg);
-            border: 2px solid var(--tech-blue); border-radius: 12px; padding: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100;
-            display: none; flex-direction: column; gap: 10px; width: 230px;
-            transform-origin: top left; animation: scaleIn 0.2s ease-out forwards;
-        }
-        .currency-panel.show { display: flex; }
-        .currency-panel input { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1.1rem; width: 100%; box-sizing: border-box; background: var(--bg-color); color: var(--text-main); font-weight: bold; }
-        .currency-panel input:focus { outline: none; border-color: var(--tech-blue); }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-        /* 大廳選單佈局 */
-        .hub-container {
-            flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; align-items: center; -webkit-overflow-scrolling: touch; padding-bottom: 40px;
-        }
-        .hub-container::-webkit-scrollbar { width: 4px; }
-        .hub-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-
-        .hub-title { font-size: 1.2rem; font-weight: 800; color: var(--text-sub); margin: 10px 0; text-align: center; letter-spacing: 2px; }
-        .hub-title::before, .hub-title::after { content: ' /// '; color: var(--tech-blue); opacity: 0.5; }
-
-        /* 日期卡片 */
-        .day-card {
-            width: 100%; max-width: 400px; background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 16px; padding: 20px; text-decoration: none; color: var(--text-main);
-            display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-        .day-card:active { transform: scale(0.97); border-color: var(--tech-blue); background: var(--tech-blue-light); }
-        .day-info { display: flex; flex-direction: column; gap: 5px; width: 100%; }
-        .day-date { font-family: 'Consolas', monospace; font-size: 0.95rem; color: var(--tech-blue); font-weight: bold; }
-        .day-title { font-size: 1.3rem; font-weight: 900; margin: 0; }
-        .day-sub { font-size: 0.9rem; color: var(--text-sub); margin: 0; line-height: 1.4; }
-        .day-arrow { font-size: 1.5rem; color: var(--border-color); font-weight: bold; transition: color 0.2s; flex-shrink: 0; margin-left: 10px; }
-        .day-card:active .day-arrow { color: var(--tech-blue); }
-
-        /* 每日交通花費標籤 */
-        .day-budget { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-        .b-tag { font-family: 'Consolas', monospace; font-size: 0.8rem; background: var(--bg-color); color: var(--tech-blue); padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border-color); font-weight: bold; }
-        body.dark-mode .b-tag { background: #222; border-color: #444; color: #81d4fa; }
-        
-        /* 每日總計標籤 */
-        .b-total { font-family: 'Consolas', monospace; font-size: 0.85rem; background: #ffebee; color: #d93025; padding: 3px 8px; border-radius: 4px; border: 1px dashed #d93025; font-weight: 900; margin-left: auto; }
-        body.dark-mode .b-total { background: #4a1c1c; color: #ff8a80; border-color: #ff8a80; }
-
-        /* 預算面板 */
-        .budget-card {
-            width: 100%; max-width: 400px; background: var(--tech-blue-light); border: 2px dashed var(--tech-blue);
-            border-radius: 16px; padding: 20px; color: var(--text-main); box-sizing: border-box;
-            display: flex; flex-direction: column; gap: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            margin-top: 10px;
-        }
-        .budget-title { font-size: 1.1rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px solid rgba(0, 91, 181, 0.2); padding-bottom: 8px; margin: 0 0 5px 0; display: flex; align-items: center; gap: 8px; }
-        .budget-row { display: flex; justify-content: space-between; font-size: 0.95rem; color: var(--text-sub); border-bottom: 1px dotted var(--border-color); padding-bottom: 5px; margin-bottom: 5px; font-family: 'Consolas', monospace; }
-        .budget-row span:first-child { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        .budget-total { display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 900; color: #d93025; margin-top: 5px; padding-top: 10px; border-top: 2px solid var(--border-color); font-family: 'Consolas', monospace; }
-        .budget-note { font-size: 0.8rem; color: var(--text-sub); text-align: left; margin-top: 5px; opacity: 0.8; line-height: 1.4; }
-    </style>
+    <link rel="stylesheet" href="common.css">
 </head>
 <body>
 
     <div class="sys-header">
         <div class="header-left">
             <a href="index.html?hub=1" class="theme-toggle" style="text-decoration: none; display: flex; align-items: center; justify-content: center;" title="回主選單大廳">🏠</a>
+            <button class="theme-toggle" id="btn-mtr" onclick="toggleMTR()" title="港鐵即時雷達">🚇</button>
             <button class="theme-toggle" id="btn-currency" onclick="toggleCurrency()" title="開啟匯率換算">💱</button>
             <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="切換深淺色">🌞</button>
-            <h1>HKG MISSION HUB</h1>
+            <h1>MISSION HUB</h1>
         </div>
         <span id="live-clock">00:00:00</span>
 
@@ -140,7 +25,29 @@
                 <span style="font-size: 0.9rem; color: var(--text-sub);">約合台幣：</span>
                 <span style="font-size: 1.3rem; font-weight: 900; color: #d93025; font-family: 'Consolas', monospace;"><span id="twd-output">0</span></span>
             </div>
-            <small id="rate-display" style="color:var(--text-sub); text-align: right; font-size: 0.75rem; display: block; margin-top: 4px;">準備獲取即時網路匯率...</small>
+        </div>
+
+        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 280px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">港鐵全路網即時看板</div>
+            
+            <div class="mtr-selectors" style="flex-direction: column; gap: 8px; margin-top: 10px;">
+                <select id="mtr-line-select" onchange="updateMTRStations()" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
+                <select id="mtr-sta-select" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
+            </div>
+
+            <button onclick="scanStationMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">📡 掃描月台動態</button>
+            
+            <div id="mtr-result" style="display: none; flex-direction: column; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid var(--tech-blue);">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-up-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-up-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid #e65100;">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-down-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-down-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
+            </div>
+            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 8px;">選擇路線與車站</small>
         </div>
     </div>
 
@@ -248,70 +155,6 @@
         </div>
     </div>
 
-    <script>
-        const currencyPanel = document.getElementById('currency-panel');
-
-        // --- 💱 即時網路匯率 ---
-        let currentRate = 4.1; 
-        let isRateFetched = false;
-
-        async function fetchRealTimeRate() {
-            if (isRateFetched) return; 
-            const rateDisplay = document.getElementById('rate-display');
-            rateDisplay.textContent = '🔄 正在獲取最新網路匯率...';
-            rateDisplay.style.color = 'var(--tech-blue)';
-
-            try {
-                const response = await fetch('https://open.er-api.com/v6/latest/HKD');
-                const data = await response.json();
-                if (data && data.rates && data.rates.TWD) {
-                    currentRate = data.rates.TWD; 
-                    isRateFetched = true;
-                    rateDisplay.textContent = `✅ 最新匯率 1 HKD = ${currentRate.toFixed(2)} TWD`;
-                    rateDisplay.style.color = '#2e7d32'; 
-                    calcCurrency(); 
-                }
-            } catch (error) {
-                rateDisplay.textContent = `⚠️ 處於離線狀態，使用預設匯率 1 : 4.1`;
-                rateDisplay.style.color = '#d93025'; 
-            }
-        }
-
-        function toggleCurrency() {
-            currencyPanel.classList.toggle('show');
-            if(currencyPanel.classList.contains('show')) {
-                document.getElementById('hkd-input').focus();
-                fetchRealTimeRate(); 
-            }
-        }
-        
-        function closeCurrencyPanel() {
-            if(currencyPanel.classList.contains('show')) currencyPanel.classList.remove('show');
-        }
-
-        function calcCurrency() {
-            const hkd = document.getElementById('hkd-input').value;
-            document.getElementById('twd-output').textContent = hkd ? Math.round(hkd * currentRate) : 0;
-        }
-
-        // --- 系統時鐘 ---
-        function updateSystemData() {
-            const now = new Date();
-            document.getElementById('live-clock').textContent = 
-                String(now.getHours()).padStart(2, '0') + ':' + 
-                String(now.getMinutes()).padStart(2, '0') + ':' + 
-                String(now.getSeconds()).padStart(2, '0');
-        }
-        setInterval(updateSystemData, 1000); 
-        updateSystemData();
-
-        // --- 🌙 深色模式 ---
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const btn = document.getElementById('theme-btn');
-            btn.textContent = document.body.classList.contains('dark-mode') ? '🌜' : '🌞';
-            closeCurrencyPanel();
-        }
-    </script>
+    <script src="common.js" defer></script>
 </body>
 </html>
