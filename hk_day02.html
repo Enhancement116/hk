@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="common.css">
 </head>
 <body>
+
     <div class="sys-header">
         <div class="header-left">
             <a href="index.html?hub=1" class="theme-toggle" style="text-decoration: none; display: flex; align-items: center; justify-content: center;" title="回主選單大廳">🏠</a>
@@ -16,7 +17,7 @@
             <h1>DAY_02 行程</h1>
         </div>
         <span id="live-clock">00:00:00</span>
-        
+
         <div id="currency-panel" class="currency-panel">
             <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">匯率換算 (HKD ➔ TWD)</div>
             <input type="number" id="hkd-input" placeholder="輸入 HKD 金額" oninput="calcCurrency()">
@@ -24,60 +25,71 @@
                 <span style="font-size: 0.9rem; color: var(--text-sub);">約合台幣：</span>
                 <span style="font-size: 1.3rem; font-weight: 900; color: #d93025; font-family: 'Consolas', monospace;"><span id="twd-output">0</span></span>
             </div>
-            <small id="rate-display" style="color:var(--text-sub); text-align: right; font-size: 0.75rem; display: block; margin-top: 4px;">準備獲取即時網路匯率...</small>
         </div>
 
-        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 260px;">
-            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">點到點導航雷達</div>
-            <div class="mtr-selectors">
-                <select id="mtr-origin">
-                    <optgroup label="港島線 (藍)">
-                        <option value="ISL-WAC" selected>灣仔</option>
-                        <option value="ISL-CEN">中環</option><option value="ISL-CAB">銅鑼灣</option>
-                        <option value="ISL-TIH">天后</option><option value="ISL-SYP">西營盤</option>
-                    </optgroup>
-                    <optgroup label="荃灣線 (紅)">
-                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK">旺角</option>
-                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
-                    </optgroup>
-                </select>
-                <span style="display:flex; align-items:center; color:var(--text-sub);">➔</span>
-                <select id="mtr-dest">
-                    <optgroup label="港島線 (藍)">
-                        <option value="ISL-WAC">灣仔</option><option value="ISL-CEN">中環</option>
-                        <option value="ISL-CAB">銅鑼灣</option><option value="ISL-TIH">天后</option>
-                        <option value="ISL-SYP">西營盤</option>
-                    </optgroup>
-                    <optgroup label="荃灣線 (紅)">
-                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK" selected>旺角</option>
-                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
-                    </optgroup>
-                </select>
+        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 280px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">港鐵全路網即時看板</div>
+            <div class="mtr-selectors" style="flex-direction: column; gap: 8px; margin-top: 10px;">
+                <select id="mtr-line-select" onchange="updateMTRStations()" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
+                <select id="mtr-sta-select" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
             </div>
-            <button onclick="scanGlobalMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;">📡 掃描路線</button>
-            <div id="mtr-result" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">距離下班車：</span><strong id="mtr-ttnt" style="color: #d93025; font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">上車時間：</span><strong id="mtr-board-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">--:--</strong></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">預估車程：</span><strong id="mtr-journey-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
-                <div style="display: flex; justify-content: space-between; align-items: center; background: var(--tech-blue-light); padding: 5px; border-radius: 4px;"><span style="color: var(--tech-blue); font-weight: bold; font-size: 0.9rem;">🎯 預計抵達：</span><strong id="mtr-arrive-time" style="color: var(--tech-blue); font-family: 'Consolas'; font-size: 1.3rem;">--:--</strong></div>
+            <button onclick="scanStationMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">📡 掃描月台動態</button>
+            <div id="mtr-result" style="display: none; flex-direction: column; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid var(--tech-blue);">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-up-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-up-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid #e65100;">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-down-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-down-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
             </div>
-            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 5px;">選擇起終點並點擊掃描</small>
+            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 8px;">選擇路線與車站</small>
         </div>
     </div>
 
     <div class="card-stack" id="stack" onclick="closeCurrencyPanel()">
         
         <div class="card" data-start="00:00" data-end="11:00">
-            <span class="time">11:00 以前</span><h3 class="title">起床與整備</h3>
+            <span class="time">11:00 以前</span>
+            <h3 class="title">起床與整備</h3>
             <div class="location-bar">灣仔英皇駿景酒店</div>
-            <div class="desc">睡到自然醒，飯店休息梳洗 (約 1 hr)。準備開啟第二天的九龍半島之旅。</div>
+            <div class="desc">
+                睡到自然醒，飯店休息梳洗 (約 1 hr)。準備開啟第二天的九龍半島之旅。
+                
+                <div class="checklist">
+                    <div class="checklist-title">🎒 出門戰備檢核：</div>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">八達通與現金</span>
+                            <span class="check-desc">確認帶上實體卡片，並備妥足夠的港幣現金 (過海與吃大排檔會用到)。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">電力確認</span>
+                            <span class="check-desc">確認手機電量，並帶上充飽電的行動電源與傳輸線。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">環保袋</span>
+                            <span class="check-desc">香港購物塑膠袋皆需收費，建議隨身攜帶一個輕便購物袋。</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <div class="card" data-start="11:00" data-end="11:45">
-            <span class="time">11:00 - 11:45</span><h3 class="title">出發前往旺角</h3>
+            <span class="time">11:00 - 11:45</span>
+            <h3 class="title">跨海遠征旺角</h3>
             <div class="location-bar">地鐵：灣仔站 ➔ 旺角站 (E2 出口)</div>
             <div class="desc">
-                包含步行前往地鐵、搭車(約 25 min)與出站尋找目標(緩衝 10 min)。
+                搭乘港鐵過海，準備體驗香港最道地的老字號早茶。
                 
                 <div class="card-mtr-widget" data-from="ISL-WAC" data-to="TWL-MOK">
                     <div class="w-header">
@@ -94,39 +106,90 @@
                     </div>
                 </div>
 
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>過海段 (灣仔 ➔ 旺角)：單人八達通約 $12 HKD。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 轉乘戰術</span><p>在灣仔搭乘「往堅尼地城」方向，坐一站到「金鐘」，走到對面月台換乘紅線 (荃灣線) 往荃灣方向即可抵達。</p></div>
+                </div>
             </div>
         </div>
 
-        <div class="card" data-start="11:45" data-end="12:55">
-            <span class="time">11:45 - 12:55</span><h3 class="title">倫敦大酒樓 (早午餐)</h3>
+        <div class="card" data-start="11:45" data-end="13:00">
+            <span class="time">11:45 - 13:00</span>
+            <h3 class="title">倫敦大酒樓 (早茶)</h3>
             <div class="location-bar">旺角彌敦道612號 (好望角大廈)</div>
-            <div class="desc">體驗香港老字號「懷舊推車飲茶」文化，用餐預抓 1 hr。</div>
-            <a href="http://googleusercontent.com/maps.google.com/?q=倫敦大酒樓" target="_blank" class="nav-btn">開啟 GPS 導航至酒樓</a>
-        </div>
-
-        <div class="card" data-start="12:55" data-end="14:30">
-            <span class="time">12:55 - 14:30</span><h3 class="title">432Hz 與花園街逛街</h3>
-            <div class="location-bar">旺角花園街 (波鞋街商圈)</div>
-            <div class="desc">從酒樓步行約 5-8 min。抵達後逛街預計 1 hr。</div>
-            <a href="http://googleusercontent.com/maps.google.com/?q=旺角花園街" target="_blank" class="nav-btn">開啟 GPS 導航至 432Hz</a>
-        </div>
-
-        <div class="card" data-start="14:30" data-end="14:55">
-            <span class="time">14:30 - 14:55</span><h3 class="title">嘉多娜餅屋 (點心)</h3>
-            <div class="location-bar">旺角碧街 / 廣華街周邊</div>
-            <div class="desc">排隊購買預留 10 min 緩衝。</div>
-            <a href="http://googleusercontent.com/maps.google.com/?q=嘉多娜餅屋" target="_blank" class="nav-btn">開啟 GPS 導航至嘉多娜</a>
-        </div>
-
-        <div class="card" data-start="14:55" data-end="15:25">
-            <span class="time">14:55 - 15:25</span><h3 class="title">移動至尖沙咀</h3>
-            <div class="location-bar">地鐵：旺角站/油麻地站 ➔ 尖沙咀站</div>
             <div class="desc">
-                搭乘地鐵轉移戰線，出站後預留 10 分鐘緩衝定位。
+                體驗香港碩果僅存的「懷舊推車飲茶」文化，用餐預抓 1 小時。這裡充滿了香港阿伯阿婆看報紙聊天的道地氛圍。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 總價約 $250</span><p>
+                        點心分小/中/大/特點計價，加上茶資 (每人約$15)。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：現金、八達通、信用卡</span>
+                        <span style="color:#e65100; font-size: 0.9rem; font-weight: bold; display:block; margin-top:2px;">⚠️ 低消：每人必須付「茶資」</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">🥟 點餐攻略</span><p>不用客氣，看到阿姨推車過來，拿著桌上的「點心卡」直接衝上去指你要「蝦餃、燒賣、鳳爪」，阿姨會幫你蓋章！</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 洗碗儀式</span><p>入座後服務生會上一盆「熱水」，那是讓你自己燙洗碗筷用的香港傳統，千萬別拿來喝！</p></div>
+                </div>
+            </div>
+            <a href="http://googleusercontent.com/maps.google.com/?q=旺角倫敦大酒樓" target="_blank" class="nav-btn">開啟 GPS 導航至酒樓</a>
+        </div>
+
+        <div class="card" data-start="13:00" data-end="14:15">
+            <span class="time">13:00 - 14:15</span>
+            <h3 class="title">波鞋街與潮流巡禮</h3>
+            <div class="location-bar">旺角花園街 (波鞋街商圈) / 432Hz</div>
+            <div class="desc">
+                從酒樓步行約 5-8 min。這裡是香港球鞋與潮流服飾的重鎮。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">👟 逛街重點</span><p>除了整條街的球鞋店，特別推薦去朝聖香港知名潮店 <b>432Hz</b>。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">🥤 逛街補給</span><p>逛累了可以順便買杯最近爆紅的「霸王茶姬」邊走邊喝。</p></div>
+                </div>
+            </div>
+            <a href="http://googleusercontent.com/maps.google.com/?q=旺角花園街" target="_blank" class="nav-btn">開啟 GPS 導航至波鞋街</a>
+        </div>
+
+        <div class="card" data-start="14:15" data-end="14:40">
+            <span class="time">14:15 - 14:40</span>
+            <h3 class="title">嘉多娜餅屋 (布丁包)</h3>
+            <div class="location-bar">油麻地碧街54號 (從旺角步行約8分)</div>
+            <div class="desc">
+                順著彌敦道往油麻地方向散步，朝聖香港近年最夯的排隊神級點心！
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 單價 $15/顆</span><p>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：現金、八達通 (不可刷卡)</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">🍮 鎮店之寶</span><p><b>「法式布丁包」</b>！外層是法國麵包的酥脆，裡面裝滿濃郁滑順的烤布丁液，剛出爐超級美味。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">⚠️ 備案</span><p>出爐時間往往大排長龍。若排隊太長，可先買其他港式麵包墊胃。</p></div>
+                </div>
+            </div>
+            <a href="http://googleusercontent.com/maps.google.com/?q=油麻地嘉多娜餅屋" target="_blank" class="nav-btn">開啟 GPS 導航至嘉多娜</a>
+        </div>
+
+        <div class="card" data-start="14:40" data-end="15:15">
+            <span class="time">14:40 - 15:15</span>
+            <h3 class="title">巧佳小巴用品 (文化朝聖)</h3>
+            <div class="location-bar">油麻地炮台街39號 (從嘉多娜步行約7分)</div>
+            <div class="desc">
+                香港獨有文化！全港唯一手寫「紅藍相間小巴牌」的麥師傅老店，絕對是買特色伴手禮的最佳地點。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 約 $40-$150</span><p>
+                        小巴牌鑰匙圈約 $40，大型掛牌約 $100+。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：現金、八達通</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">🖌️ 必買推薦</span><p>店內有滿滿寫著香港地名、搞笑金句（如：百毒不侵、準時收工）的壓克力牌，也可以現場請師傅客製化寫上自己的名字！</p></div>
+                </div>
+            </div>
+            <a href="http://googleusercontent.com/maps.google.com/?q=Hawk+Ltd+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航至巧佳小巴</a>
+        </div>
+
+        <div class="card" data-start="15:15" data-end="15:45">
+            <span class="time">15:15 - 15:45</span>
+            <h3 class="title">移動至尖沙咀</h3>
+            <div class="location-bar">地鐵：油麻地站 ➔ 尖沙咀站</div>
+            <div class="desc">
+                結束油麻地的文化巡禮，搭乘地鐵轉移戰線至繁華的尖沙咀。
                 
-                <div class="card-mtr-widget" data-from="TWL-MOK" data-to="TWL-TST">
+                <div class="card-mtr-widget" data-from="TWL-YMT" data-to="TWL-TST">
                     <div class="w-header">
-                        <span class="w-title">🚇 戰術雷達：旺角 ➔ 尖沙咀</span>
+                        <span class="w-title">🚇 戰術雷達：油麻地 ➔ 尖沙咀</span>
                         <button class="w-btn" onclick="scanCardMTR(this)">掃描班次</button>
                     </div>
                     <div class="w-result">
@@ -139,27 +202,66 @@
                     </div>
                 </div>
 
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>市區段 (油麻地 ➔ 尖沙咀)：單人八達通約 $5 HKD。</p></div>
+                </div>
             </div>
         </div>
 
-        <div class="card" data-start="15:25" data-end="17:35">
-            <span class="time">15:25 - 17:35</span><h3 class="title">尖沙咀逛街 (UNIBUY & K11)</h3>
+        <div class="card" data-start="15:45" data-end="17:35">
+            <span class="time">15:45 - 17:35</span>
+            <h3 class="title">尖沙咀逛街 (UNIBUY & K11)</h3>
             <div class="location-bar">尖沙咀商圈 / 奢侈品(UNIBUY) / K11 Art Mall</div>
-            <div class="desc">在尖沙咀盡情逛街 2 hr。</div>
+            <div class="desc">
+                在尖沙咀盡情逛街近 2 小時。
+                <div class="indoor-map">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 逛街動線建議</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">第一站：UNIBUY (奢侈品)
+                                <span class="p-sub">👜 若有鎖定名牌包款，建議優先前往掃貨。</span>
+                            </div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">
+                                第二站：K11 Art Mall
+                                <span class="p-sub">🛍️ 轉戰被譽為「文青商場」的 K11，內有許多獨立設計師品牌。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-tip">💡 建議</span><p>尖沙咀人潮極多，提著戰利品逛街請隨時留意隨身財物安全。</p></div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; flex-shrink: 0;">
+                <a href="https://maps.google.com/?q=UNIBUY+尖沙咀" target="_blank" class="nav-btn" style="margin-top: 0;">開啟 GPS 導航至 UNIBUY</a>
+                <a href="https://maps.google.com/?q=K11+Art+Mall" target="_blank" class="nav-btn" style="margin-top: 0; border-color: #515154; color: #515154;">開啟 GPS 導航至 K11</a>
+            </div>
         </div>
 
-        <div class="card" data-start="17:35" data-end="19:10">
-            <span class="time">17:35 - 19:10</span><h3 class="title">星光大道與維多利亞港</h3>
+        <div class="card" data-start="17:35" data-end="19:00">
+            <span class="time">17:35 - 19:00</span>
+            <h3 class="title">星光大道與維多利亞港</h3>
             <div class="location-bar">尖沙咀海濱長廊</div>
-            <div class="desc">往維港海濱方向散步，找定拍照點，欣賞無敵海景 1 hr。</div>
+            <div class="desc">
+                往維港海濱方向散步，找定拍照點，欣賞無敵海景。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-star">⭐ 必看亮點</span><p>香港電影金像獎女神銅像、李小龍銅像，以及地上的名人手印。</p></div>
+                    <div class="tag-row"><span class="tag t-time">📸 攝影時間點</span><p>這個時間點完美捕捉從「黃昏夕陽」一路漸變到對岸港島建築物亮起「百萬夜景」的神奇時刻！</p></div>
+                </div>
+            </div>
             <a href="http://googleusercontent.com/maps.google.com/?q=星光大道" target="_blank" class="nav-btn">開啟 GPS 導航至海濱</a>
         </div>
 
-        <div class="card" data-start="19:10" data-end="19:35">
-            <span class="time">19:10 - 19:35</span><h3 class="title">重返旺角 (前往晚餐)</h3>
+        <div class="card" data-start="19:00" data-end="19:30">
+            <span class="time">19:00 - 19:30</span>
+            <h3 class="title">重返旺角 (前往晚餐)</h3>
             <div class="location-bar">地鐵：尖沙咀站 ➔ 旺角站</div>
             <div class="desc">
-                告別海港，搭乘地鐵回旺角。
+                告別海港，搭乘地鐵回旺角，出站後步行至通菜街。
                 
                 <div class="card-mtr-widget" data-from="TWL-TST" data-to="TWL-MOK">
                     <div class="w-header">
@@ -176,52 +278,80 @@
                     </div>
                 </div>
 
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>市區段 (尖沙咀 ➔ 旺角)：單人八達通約 $5 HKD。</p></div>
+                </div>
             </div>
         </div>
 
-        <div class="card" data-start="19:35" data-end="20:45">
-            <span class="time">19:35 - 20:45</span><h3 class="title">女人街食飯公司</h3>
-            <div class="location-bar">旺角通菜街1A-1L威達商業大廈</div>
-            <div class="desc">體驗最道地的「港式大排檔」熱炒風情，用餐 1 hr。</div>
+        <div class="card" data-start="19:30" data-end="20:45">
+            <span class="time">19:30 - 20:45</span>
+            <h3 class="title">女人街食飯公司 (晚餐)</h3>
+            <div class="location-bar">旺角通菜街1A-1L威達商業大廈 1樓</div>
+            <div class="desc">
+                體驗最道地、最有氣氛的「港式大排檔」熱炒風情！
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 總價約 $450</span><p>
+                        以熱炒均價估算。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：現金、信用卡、八達通</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">🦀 推薦必點</span><p>避風塘炒蟹、黑松露鮮蝦多士、沙爹牛肉粉絲煲。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">📸 環境特色</span><p>店內裝潢神還原香港80年代的霓虹燈街頭與綠色鐵皮屋，超級適合拍照打卡！</p></div>
+                </div>
+            </div>
             <a href="http://googleusercontent.com/maps.google.com/?q=女人街食飯公司" target="_blank" class="nav-btn">開啟 GPS 導航至餐廳</a>
         </div>
 
         <div class="card" data-start="20:45" data-end="21:15">
-            <span class="time">20:45 - 21:15</span><h3 class="title">迪士尼備糧 (戰略採買)</h3>
-            <div class="location-bar">旺角周邊麵包店 / 嘉多娜餅屋</div>
-            <div class="desc">買好明天去迪士尼要在門口排隊時吃的早餐！</div>
+            <span class="time">20:45 - 21:15</span>
+            <h3 class="title">迪士尼備糧 (戰略採買)</h3>
+            <div class="location-bar">旺角周邊麵包店 / 超市</div>
+            <div class="desc">
+                <b>【明日戰略重點】</b>：買好明天去迪士尼要在門口排隊時吃的早餐與乾糧！
+                <div class="checklist">
+                    <div class="checklist-title">🛒 採買檢核表：</div>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">常溫麵包 (2-3人份)</span>
+                            <span class="check-desc">若嘉多娜已打烊，隨便找一間連鎖西餅店 (如美心、東海堂) 買明天的麵包即可。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">瓶裝水或飲料</span>
+                            <span class="check-desc">迪士尼園區內水非常貴，務必在市區超市或便利商店先買好帶進去。</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <div class="card" data-start="21:15" data-end="21:55">
-            <span class="time">21:15 - 21:55</span><h3 class="title">佳佳甜品 (外帶宵夜)</h3>
+            <span class="time">21:15 - 21:55</span>
+            <h3 class="title">佳佳甜品 (外帶宵夜)</h3>
             <div class="location-bar">佐敦白加士街29號</div>
             <div class="desc">
-                從旺角搭地鐵至「佐敦站 (A出口)」，買份糖水回飯店當宵夜。
-                
-                <div class="card-mtr-widget" data-from="TWL-MOK" data-to="TWL-JOR">
-                    <div class="w-header">
-                        <span class="w-title">🚇 戰術雷達：旺角 ➔ 佐敦</span>
-                        <button class="w-btn" onclick="scanCardMTR(this)">掃描班次</button>
-                    </div>
-                    <div class="w-result">
-                        <div class="w-row"><span>預估車程：</span><span class="w-val j-time">--</span></div>
-                        <div class="w-row"><span>下一班車：</span><span class="w-val n-train" style="color:#d93025;">--</span></div>
-                        <div class="w-row" style="border-top:1px solid rgba(0,0,0,0.1); padding-top:8px;">
-                            <span style="color:var(--tech-blue); font-weight:bold;">🎯 預計抵達：</span>
-                            <span class="w-val a-time" style="color:var(--tech-blue); font-size: 1.3rem;">--:--</span>
-                        </div>
-                    </div>
+                從旺角搭地鐵南下一站至「佐敦站 (A出口)」，買份糖水回飯店當宵夜。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 總價約 $70</span><p>
+                        <b>芝麻糊</b> ($28)、<b>寧波薑汁湯圓</b> ($28) 等。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：現金、八達通 (不可刷卡)</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">⭐ 推薦</span><p>連續多年獲米其林推薦！芝麻糊極致濃郁，湯圓皮薄餡多。</p></div>
+                    <div class="tag-row"><span class="tag t-tip">⏱ 戰術耗時</span><p>店內通常大客滿，選擇<b>「外帶 (Takeaway)」</b>速度會快非常多！</p></div>
                 </div>
-
             </div>
-            <a href="http://googleusercontent.com/maps.google.com/?q=佳佳甜品" target="_blank" class="nav-btn">開啟 GPS 導航至佳佳</a>
+            <a href="http://googleusercontent.com/maps.google.com/?q=佐敦佳佳甜品" target="_blank" class="nav-btn">開啟 GPS 導航至佳佳</a>
         </div>
 
-        <div class="card" data-start="21:55" data-end="23:59">
-            <span class="time">21:55 - 23:59</span><h3 class="title">滿載而歸 (回飯店)</h3>
+        <div class="card" data-start="21:55" data-end="22:30">
+            <span class="time">21:55 - 22:30</span>
+            <h3 class="title">滿載而歸 (回飯店)</h3>
             <div class="location-bar">地鐵：佐敦站 ➔ 灣仔站</div>
             <div class="desc">
-                提著甜品與明天迪士尼的裝備，搭車過海回飯店。
+                提著甜品、戰利品與明天迪士尼的裝備，搭車過海回飯店，結束充實的第二天！
                 
                 <div class="card-mtr-widget" data-from="TWL-JOR" data-to="ISL-WAC">
                     <div class="w-header">
@@ -238,12 +368,55 @@
                     </div>
                 </div>
 
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>過海段 (佐敦 ➔ 灣仔)：單人八達通約 $12 HKD。</p></div>
+                </div>
             </div>
-            <a href="http://googleusercontent.com/maps.google.com/?q=英皇駿景酒店" target="_blank" class="nav-btn">開啟 GPS 導航回飯店</a>
+            <a href="http://googleusercontent.com/maps.google.com/?q=The+Emperor+Hotel+Hong+Kong" target="_blank" class="nav-btn">開啟 GPS 導航回飯店</a>
+        </div>
+
+        <div class="card" data-start="22:30" data-end="23:59">
+            <span class="time">22:30 以後</span>
+            <h3 class="title">DAY 02 戰備結算</h3>
+            <div class="location-bar">灣仔英皇駿景酒店</div>
+            <div class="desc">
+                九龍半島大行軍圓滿達成！以下為本日<b>雙人總結算</b>預估開銷統計：
+                
+                <div class="data-box">
+                    <span>> 交通：港鐵 4 趟 ($78) = $78</span>
+                    <span>> 飲食：酒樓($250)+嘉多娜($30)+晚餐($450)+佳佳($70) = $800</span>
+                    <span>> 購物：巧佳小巴牌(抓約$100) = $100</span>
+                    <span class="total">> 雙人總計估算: $978 HKD</span>
+                </div>
+
+                <div class="checklist" style="margin-top: 20px;">
+                    <div class="checklist-title">💰 支付方式盤點與建議：</div>
+                    <label>
+                        <input type="checkbox" checked disabled>
+                        <div class="check-content">
+                            <span class="check-title">現金需求 (約 $500 HKD)</span>
+                            <span class="check-desc">酒樓、佳佳甜品、嘉多娜、巧佳小巴皆可使用現金或八達通，建議備妥以防萬一。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox" checked disabled>
+                        <div class="check-content">
+                            <span class="check-title">刷卡需求</span>
+                            <span class="check-desc">尖沙咀 UNIBUY/K11 購物，以及晚餐 (食飯公司) 皆可無腦刷卡。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox" checked disabled>
+                        <div class="check-content">
+                            <span class="check-title">八達通需求</span>
+                            <span class="check-desc">今日為極度依賴港鐵的一天，請確保卡內餘額充足 (每人至少需 $40)。</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
     </div>
-
     <div class="controls">
         <button class="btn" id="btn-prev" title="上一個行程">⬅</button>
         <button class="btn btn-center" id="btn-now">📍 追蹤當前行程</button>
