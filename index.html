@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HKG_OPERATION | 香港行軍總署</title>
     <link rel="stylesheet" href="common.css">
+    <style>
+        /* 針對首頁飲食與購物標籤的客製化樣式 */
+        .f-tag { color: #e65100; border-color: #ffcc80; background: #fff8e1; }
+        body.dark-mode .f-tag { background: #3e2723; border-color: #ff9800; color: #ffcc80; }
+        .s-tag { color: #2e7d32; border-color: #a5d6a7; background: #e8f5e9; }
+        body.dark-mode .s-tag { background: #1b5e20; border-color: #4caf50; color: #a5d6a7; }
+    </style>
 </head>
 <body>
 
@@ -25,7 +32,6 @@
                 <span style="font-size: 0.9rem; color: var(--text-sub);">約合台幣：</span>
                 <span style="font-size: 1.3rem; font-weight: 900; color: #d93025; font-family: 'Consolas', monospace;"><span id="twd-output">0</span></span>
             </div>
-            <small id="rate-display" style="color:var(--text-sub); text-align: right; font-size: 0.75rem; display: block; margin-top: 4px;">準備獲取即時網路匯率...</small>
         </div>
 
         <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 280px;">
@@ -61,11 +67,12 @@
                 <h2 class="day-title">DAY 01</h2>
                 <p class="day-sub">香港登陸戰 / 甘牌燒鵝 / 華姐清湯腩</p>
                 <div class="day-budget">
-                    <span class="b-tag">🚄 機快 $85</span>
-                    <span class="b-tag">🚖 的士 $41</span>
-                    <span class="b-tag">🚇 港鐵 $5</span>
+                    <span class="b-tag">🚄 機快 $170</span>
+                    <span class="b-tag">🚖 的士 $82</span>
+                    <span class="b-tag">🚇 港鐵 $10</span>
                     <span class="b-tag">🚃 叮叮 $6</span>
-                    <span class="b-total">小計 $137</span>
+                    <span class="b-tag f-tag">🍔 飲食 $599</span>
+                    <span class="b-total">總計 $867</span>
                 </div>
             </div>
             <span class="day-arrow">➔</span>
@@ -77,8 +84,10 @@
                 <h2 class="day-title">DAY 02</h2>
                 <p class="day-sub">九龍行軍 / 星光大道 / 女人街食飯公司</p>
                 <div class="day-budget">
-                    <span class="b-tag">🚇 港鐵 $39</span>
-                    <span class="b-total">小計 $39</span>
+                    <span class="b-tag">🚇 港鐵 $78</span>
+                    <span class="b-tag f-tag">🍔 飲食 $800</span>
+                    <span class="b-tag s-tag">🛍️ 購物 $100</span>
+                    <span class="b-total">總計 $978</span>
                 </div>
             </div>
             <span class="day-arrow">➔</span>
@@ -90,9 +99,10 @@
                 <h2 class="day-title">DAY 03</h2>
                 <p class="day-sub">迪士尼極限戰鬥 / 大排檔戰後補給</p>
                 <div class="day-budget">
-                    <span class="b-tag">🚖 的士 $125</span>
-                    <span class="b-tag">🚇 港鐵 $35</span>
-                    <span class="b-total">小計 $160</span>
+                    <span class="b-tag">🚖 的士 $250</span>
+                    <span class="b-tag">🚇 港鐵 $80</span>
+                    <span class="b-tag f-tag">🍔 飲食 $600</span>
+                    <span class="b-total">總計 $930</span>
                 </div>
             </div>
             <span class="day-arrow">➔</span>
@@ -104,9 +114,10 @@
                 <h2 class="day-title">DAY 04</h2>
                 <p class="day-sub">港島巡禮 / 沾仔記 / 坤記炭火煲仔飯</p>
                 <div class="day-budget">
-                    <span class="b-tag">🚇 港鐵 $16</span>
-                    <span class="b-tag">🚃 叮叮 $3</span>
-                    <span class="b-total">小計 $19</span>
+                    <span class="b-tag">🚇 港鐵 $32</span>
+                    <span class="b-tag">🚃 叮叮 $6</span>
+                    <span class="b-tag f-tag">🍔 飲食 ~$600</span>
+                    <span class="b-total">估計 ~$638</span>
                 </div>
             </div>
             <span class="day-arrow">➔</span>
@@ -118,24 +129,46 @@
                 <h2 class="day-title">DAY 05</h2>
                 <p class="day-sub">終極撤退 / 六安居推車飲茶 / 歸途</p>
                 <div class="day-budget">
-                    <span class="b-tag">🚃 叮叮 $6</span>
-                    <span class="b-tag">🚖 Uber $20</span>
-                    <span class="b-tag">🚇 港鐵 $5</span>
-                    <span class="b-tag">🚄 機快 $85</span>
-                    <span class="b-total">小計 $116</span>
+                    <span class="b-tag">🚃 叮叮 $12</span>
+                    <span class="b-tag">🚖 Uber $40</span>
+                    <span class="b-tag">🚇 港鐵 $10</span>
+                    <span class="b-tag">🚄 機快 $170</span>
+                    <span class="b-tag f-tag">🍔 飲食 ~$300</span>
+                    <span class="b-total">估計 ~$532</span>
                 </div>
             </div>
             <span class="day-arrow">➔</span>
         </a>
 
         <div class="budget-card">
-            <h3 class="budget-title">📊 行程總交通預算 (單人)</h3>
-            <div class="budget-row"><span>🚇 港鐵 (MTR)</span><span>$100 HKD</span></div>
-            <div class="budget-row"><span>🚖 Uber / 的士 (雙人均攤)</span><span>$186 HKD</span></div>
-            <div class="budget-row"><span>🚃 叮叮車 (Tram)</span><span>$15 HKD</span></div>
-            <div class="budget-row"><span>🚄 機場快線 (來回)</span><span>$170 HKD</span></div>
-            <div class="budget-total"><span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">總計預估 (HKD)</span><span>$471</span></div>
-            <div class="budget-note">* 註: 上述為單人預估花費。機快(雙人套票)、Uber及的士皆已預設為雙人均攤計算，實際扣款依八達通與當下叫車為準。</div>
+            <h3 class="budget-title">📊 戰備資金總核算 (雙人總計)</h3>
+            <div class="budget-row">
+                <span>🚇 港鐵 (MTR) 雙人</span>
+                <span>~$210 HKD</span>
+            </div>
+            <div class="budget-row">
+                <span>🚃 叮叮車 (Tram) 雙人</span>
+                <span>$24 HKD</span>
+            </div>
+            <div class="budget-row">
+                <span>🚖 Uber / 的士 雙人</span>
+                <span>~$372 HKD</span>
+            </div>
+            <div class="budget-row">
+                <span>🚄 機場快線 (來回雙趟)</span>
+                <span>$340 HKD</span>
+            </div>
+            <div class="budget-row" style="border-top: 1px dashed rgba(0, 91, 181, 0.3); padding-top: 8px; margin-top: 5px;">
+                <span style="color:#e65100; font-weight:bold;">🍔 飲食吃喝 (雙人總計)</span>
+                <span style="color:#e65100; font-weight:bold;">~$2,899 HKD</span>
+            </div>
+            <div class="budget-total">
+                <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">雙人準備金總額 (車+食)</span>
+                <span>約 $4,000 HKD</span>
+            </div>
+            <div class="budget-note">
+                * 註：以上金額皆為<b>「雙人總價」</b>。除了在 Klook 預先刷卡買好的票券（如機票、門票、DPA）外，建議兩人共同準備約 <b>$4,000 HKD 現金</b> 作為這 5 天的八達通儲值與當地吃飯花費。
+            </div>
         </div>
     </div>
 

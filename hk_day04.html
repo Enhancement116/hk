@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKG_DAY_04 | 港島美食與街市巡禮</title>
+    <title>HKG_DAY_04 | 港島美食與山頂巡禮</title>
     <link rel="stylesheet" href="common.css">
 </head>
 <body>
+
     <div class="sys-header">
         <div class="header-left">
             <a href="index.html?hub=1" class="theme-toggle" style="text-decoration: none; display: flex; align-items: center; justify-content: center;" title="回主選單大廳">🏠</a>
@@ -16,7 +17,7 @@
             <h1>DAY_04 行程</h1>
         </div>
         <span id="live-clock">00:00:00</span>
-        
+
         <div id="currency-panel" class="currency-panel">
             <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">匯率換算 (HKD ➔ TWD)</div>
             <input type="number" id="hkd-input" placeholder="輸入 HKD 金額" oninput="calcCurrency()">
@@ -26,54 +27,58 @@
             </div>
         </div>
 
-        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 260px;">
-            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">點到點導航雷達</div>
-            <div class="mtr-selectors">
-                <select id="mtr-origin">
-                    <optgroup label="港島線 (藍)">
-                        <option value="ISL-WAC" selected>灣仔</option>
-                        <option value="ISL-CEN">中環</option><option value="ISL-CAB">銅鑼灣</option>
-                        <option value="ISL-TIH">天后</option><option value="ISL-SYP">西營盤</option>
-                    </optgroup>
-                    <optgroup label="荃灣線 (紅)">
-                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK">旺角</option>
-                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
-                    </optgroup>
-                </select>
-                <span style="display:flex; align-items:center; color:var(--text-sub);">➔</span>
-                <select id="mtr-dest">
-                    <optgroup label="港島線 (藍)">
-                        <option value="ISL-WAC">灣仔</option><option value="ISL-CEN">中環</option>
-                        <option value="ISL-CAB">銅鑼灣</option><option value="ISL-TIH">天后</option>
-                        <option value="ISL-SYP">西營盤</option>
-                    </optgroup>
-                    <optgroup label="荃灣線 (紅)">
-                        <option value="TWL-TST">尖沙咀</option><option value="TWL-MOK" selected>旺角</option>
-                        <option value="TWL-JOR">佐敦</option><option value="TWL-SSP">深水埗</option>
-                    </optgroup>
-                </select>
+        <div id="mtr-panel" class="currency-panel" style="left: 55px; width: 280px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: var(--tech-blue); border-bottom: 1px dashed var(--border-color); padding-bottom: 5px;">港鐵全路網即時看板</div>
+            <div class="mtr-selectors" style="flex-direction: column; gap: 8px; margin-top: 10px;">
+                <select id="mtr-line-select" onchange="updateMTRStations()" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
+                <select id="mtr-sta-select" style="padding: 8px; border-radius: 6px; font-weight: bold;"></select>
             </div>
-            <button onclick="scanGlobalMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px;">📡 掃描路線</button>
-            <div id="mtr-result" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">距離下班車：</span><strong id="mtr-ttnt" style="color: #d93025; font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">上車時間：</span><strong id="mtr-board-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">--:--</strong></div>
-                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-sub); font-size: 0.9rem;">預估車程：</span><strong id="mtr-journey-time" style="color: var(--text-main); font-family: 'Consolas'; font-size: 1.1rem;">-- 分鐘</strong></div>
-                <div style="display: flex; justify-content: space-between; align-items: center; background: var(--tech-blue-light); padding: 5px; border-radius: 4px;"><span style="color: var(--tech-blue); font-weight: bold; font-size: 0.9rem;">🎯 預計抵達：</span><strong id="mtr-arrive-time" style="color: var(--tech-blue); font-family: 'Consolas'; font-size: 1.3rem;">--:--</strong></div>
+            <button onclick="scanStationMTR()" style="background: var(--tech-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">📡 掃描月台動態</button>
+            <div id="mtr-result" style="display: none; flex-direction: column; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid var(--tech-blue);">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-up-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-up-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
+                <div style="background: var(--bg-color); padding: 8px; border-radius: 6px; border-left: 4px solid #e65100;">
+                    <div style="font-size: 0.85rem; color: var(--text-sub);">往 <span id="mtr-down-dest" style="font-weight:bold; color:var(--text-main);">--</span></div>
+                    <div id="mtr-down-time" style="font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 900; color: #d93025; margin-top: 2px;">--</div>
+                </div>
             </div>
-            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 5px;">選擇起終點並點擊掃描</small>
+            <small id="mtr-status" style="color:var(--text-sub); text-align: center; font-size: 0.75rem; margin-top: 8px;">選擇路線與車站</small>
         </div>
     </div>
 
     <div class="card-stack" id="stack" onclick="closeCurrencyPanel()">
         
         <div class="card" data-start="00:00" data-end="12:00">
-            <span class="time">11:00 - 12:00</span><h3 class="title">起床與整備</h3>
+            <span class="time">11:00 - 12:00</span>
+            <h3 class="title">起床與整備</h3>
             <div class="location-bar">灣仔英皇駿景酒店</div>
-            <div class="desc">經歷了昨天的迪士尼極限戰鬥，今天睡到自然醒。</div>
+            <div class="desc">
+                經歷了昨天的迪士尼極限戰鬥，今天睡到自然醒。起床後在飯店休息、梳洗，準備出發！
+                <div class="checklist">
+                    <div class="checklist-title">🎒 港島巡禮裝備確認：</div>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">八達通與港幣現金</span>
+                            <span class="check-desc">今日會吃多間傳統老字號，並搭乘叮叮車，務必備妥現金與八達通餘額。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">纜車 QR Code 憑證</span>
+                            <span class="check-desc">若已在 Klook 購買太平山纜車套票，請先將憑證截圖。</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <div class="card" data-start="12:00" data-end="12:40">
-            <span class="time">12:00 - 12:40</span><h3 class="title">出發前往中環</h3>
+            <span class="time">12:00 - 12:40</span>
+            <h3 class="title">出發前往中環</h3>
             <div class="location-bar">灣仔站 ➔ 中環站 ➔ 威靈頓街</div>
             <div class="desc">
                 搭乘港鐵港島線西行前往中環，準備享用米其林美食。
@@ -92,38 +97,131 @@
                         </div>
                     </div>
                 </div>
-
+                
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>市區段 (灣仔 ➔ 中環)：單人八達通約 $5 HKD。</p></div>
+                </div>
             </div>
         </div>
 
         <div class="card" data-start="12:40" data-end="13:40">
-            <span class="time">12:40 - 13:40</span><h3 class="title">沾仔記 (米其林午餐)</h3>
+            <span class="time">12:40 - 13:40</span>
+            <h3 class="title">沾仔記 (米其林午餐)</h3>
             <div class="location-bar">中環威靈頓街98號</div>
-            <div class="desc">連續多年獲得米其林推薦的平價傳奇！在此用餐休息 1 小時。</div>
+            <div class="desc">
+                連續多年獲得米其林推薦的平價傳奇！在此用餐休息 1 小時。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 總價估 ~$100</span><p>
+                        <b>招牌雲吞麵</b> (約$40/碗)。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：現金、八達通、支付寶 (不可刷卡)</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">⭐ 點餐提示</span><p>雲吞大顆飽滿包滿鮮蝦，麵條是道地的香港竹昇麵。若食量大，可點「雙拼麵」(如雲吞拼鮮牛肉) 一次享受兩種美味！</p></div>
+                </div>
+            </div>
             <a href="http://googleusercontent.com/maps.google.com/?q=中環沾仔記" target="_blank" class="nav-btn">開啟 GPS 導航至沾仔記</a>
         </div>
 
         <div class="card" data-start="13:40" data-end="14:20">
-            <span class="time">13:40 - 14:20</span><h3 class="title">中環道地飲品搜集</h3>
+            <span class="time">13:40 - 14:20</span>
+            <h3 class="title">中環道地飲品搜集</h3>
             <div class="location-bar">中環結志街 / 荷李活道</div>
-            <div class="desc">吃飽後步行散步，連續解鎖兩間中環必喝的老字號飲品！</div>
+            <div class="desc">
+                吃飽後沿著「半山手扶梯」散步，連續解鎖兩間中環必喝的老字號飲品！
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 總價估 ~$70</span><p>
+                        奶茶約$25，竹蔗水約$15。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：強烈建議使用現金或八達通</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">🥤 蘭芳園</span><p>絲襪奶茶的創始店！買一杯正宗的「凍絲襪奶茶」邊走邊喝。</p></div>
+                    <div class="tag-row"><span class="tag t-star">🎋 公利真料竹蔗水</span><p>保留60年代唐樓風貌，來一杯清涼退火的「竹蔗水」。</p></div>
+                </div>
+            </div>
+            <a href="http://googleusercontent.com/maps.google.com/?q=中環蘭芳園" target="_blank" class="nav-btn">開啟 GPS 導航至蘭芳園</a>
         </div>
 
-        <div class="card" data-start="14:20" data-end="15:50">
-            <span class="time">14:20 - 15:50</span><h3 class="title">中環街市與品牌巡禮</h3>
+        <div class="card" data-start="14:20" data-end="15:30">
+            <span class="time">14:20 - 15:30</span>
+            <h3 class="title">中環街市與品牌巡禮</h3>
             <div class="location-bar">中環街市 / 威靈頓街周邊</div>
-            <div class="desc">歷史建築活化重生的文創商場，安排 1.5 小時盡情逛街挖寶！</div>
+            <div class="desc">
+                歷史建築活化重生的文創商場，安排約 1 小時逛街挖寶！
+                <div class="indoor-map" style="margin-top: 15px;">
+                    <div class="indoor-map-title">TACTICAL ROUTE: 逛街重點目標</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">中環街市 (Central Market)
+                                <span class="p-sub">📸 內部有許多文創小店與經典的水磨石大樓梯，非常適合打卡拍照。</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">兆成行 (香薰精油)
+                                <span class="p-sub">✨ 舒淇強力推薦的隱藏版神店，可選購香港高級飯店同款香氣。</span>
+                            </div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">Brand Off
+                                <span class="p-sub">👜 日本知名的二手奢侈品店，來看看有沒有價格漂亮的二手名牌包！</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card" data-start="15:50" data-end="16:30">
-            <span class="time">15:50 - 16:30</span><h3 class="title">撤退中環，重返灣仔</h3>
-            <div class="location-bar">中環站 ➔ 灣仔站 ➔ 大王東街</div>
+        <div class="card" data-start="15:30" data-end="18:30">
+            <span class="time">15:30 - 18:30</span>
+            <h3 class="title">太平山頂纜車攻頂</h3>
+            <div class="location-bar">花園道纜車總站 ➔ 凌霄閣摩天台428</div>
             <div class="desc">
-                結束中環的行程，搭乘地鐵回灣仔準備吃下午茶甜點。
+                港島最經典的神級行程！從中環商圈一路漫步至花園道搭乘第六代山頂纜車，並上摩天台飽覽維港夕陽與夜景。
                 
-                <div class="card-mtr-widget" data-from="ISL-CEN" data-to="ISL-WAC">
+                <div class="indoor-map" style="margin-top: 15px;">
+                    <div class="indoor-map-title">TIME SCHEDULE: 攻頂時間軸</div>
+                    <div class="path-container">
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">15:30 步行前往纜車站
+                                <span class="p-sub">🚶 從中環街市周邊步行約 15 分鐘可達「花園道山頂纜車總站」。</span>
+                            </div>
+                        </div>
+                        <div class="path-node">
+                            <div class="p-dot"></div>
+                            <div class="p-label">16:00 搭乘山頂纜車
+                                <span class="p-sub">🚠 <b>上山請務必坐在「右邊」座位！</b> 這是飽覽維多利亞港無死角海景的黃金方位。</span>
+                            </div>
+                        </div>
+                        <div class="path-node active">
+                            <div class="p-dot"></div>
+                            <div class="p-label">16:30 - 17:45 凌霄閣摩天台
+                                <span class="p-sub">📸 登上全港最高 360 度觀景台。這段時間完美涵蓋白天、夕陽漸變到百萬夜景亮起的時刻！</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 套票估 ~$300</span><p>
+                        纜車來回 + 摩天台428 (雙人價)。<br>
+                        <span style="color:#2e7d32; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 建議直接在 Klook 買好 QR Code 免排隊購票。亦支援刷八達通直接進站。</span>
+                    </p></div>
+                </div>
+            </div>
+            <a href="http://googleusercontent.com/maps.google.com/?q=Peak+Tram+Lower+Terminus" target="_blank" class="nav-btn">開啟 GPS 導航至纜車站</a>
+        </div>
+
+        <div class="card" data-start="18:30" data-end="19:10">
+            <span class="time">18:30 - 19:10</span>
+            <h3 class="title">遠征西營盤</h3>
+            <div class="location-bar">中環站 ➔ 西營盤站 (B1出口)</div>
+            <div class="desc">
+                看完夜景搭纜車下山後，走回中環站，準備前往西區享用今晚的重頭戲大餐！
+                
+                <div class="card-mtr-widget" data-from="ISL-CEN" data-to="ISL-SYP">
                     <div class="w-header">
-                        <span class="w-title">🚇 戰術雷達：中環 ➔ 灣仔</span>
+                        <span class="w-title">🚇 戰術雷達：中環 ➔ 西營盤</span>
                         <button class="w-btn" onclick="scanCardMTR(this)">掃描班次</button>
                     </div>
                     <div class="w-result">
@@ -136,67 +234,119 @@
                     </div>
                 </div>
 
-            </div>
-        </div>
-
-        <div class="card" data-start="16:30" data-end="17:00">
-            <span class="time">16:30 - 17:00</span><h3 class="title">C Dessert (下午茶)</h3>
-            <div class="location-bar">灣仔大王東街</div>
-            <div class="desc">坐下來享受 30 分鐘的精緻港式/法式創意甜點時間。</div>
-            <a href="http://googleusercontent.com/maps.google.com/?q=灣仔C+Dessert" target="_blank" class="nav-btn">開啟 GPS 導航至甜點店</a>
-        </div>
-
-        <div class="card" data-start="17:00" data-end="18:40">
-            <span class="time">17:10 - 18:40</span><h3 class="title">灣仔周圍深度逛街</h3>
-            <div class="location-bar">利東街 / 太原街</div>
-            <div class="desc">探索灣仔新舊交融的街區魅力，預計漫步逛街 1.5 小時。</div>
-        </div>
-
-        <div class="card" data-start="18:40" data-end="19:10">
-            <span class="time">18:40 - 19:10</span><h3 class="title">遠征西營盤</h3>
-            <div class="location-bar">地鐵：灣仔站 ➔ 西營盤站 (B1出口)</div>
-            <div class="desc">
-                準備前往西區享用今晚的重頭戲大餐！
-                
-                <div class="card-mtr-widget" data-from="ISL-WAC" data-to="ISL-SYP">
-                    <div class="w-header">
-                        <span class="w-title">🚇 戰術雷達：灣仔 ➔ 西營盤</span>
-                        <button class="w-btn" onclick="scanCardMTR(this)">掃描班次</button>
-                    </div>
-                    <div class="w-result">
-                        <div class="w-row"><span>預估車程：</span><span class="w-val j-time">--</span></div>
-                        <div class="w-row"><span>下一班車：</span><span class="w-val n-train" style="color:#d93025;">--</span></div>
-                        <div class="w-row" style="border-top:1px solid rgba(0,0,0,0.1); padding-top:8px;">
-                            <span style="color:var(--tech-blue); font-weight:bold;">🎯 預計抵達：</span>
-                            <span class="w-val a-time" style="color:var(--tech-blue); font-size: 1.3rem;">--:--</span>
-                        </div>
-                    </div>
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 港鐵車資</span><p>市區段 (中環 ➔ 西營盤)：單人八達通約 $5 HKD。</p></div>
                 </div>
-
             </div>
         </div>
 
-        <div class="card" data-start="19:10" data-end="20:10">
-            <span class="time">19:10 - 20:10</span><h3 class="title">坤記煲仔小菜 (晚餐)</h3>
+        <div class="card" data-start="19:10" data-end="20:40">
+            <span class="time">19:10 - 20:40</span>
+            <h3 class="title">坤記煲仔小菜 (晚餐)</h3>
             <div class="location-bar">西營盤皇后大道西263號</div>
-            <div class="desc">米其林必比登推薦！香港最頂級的炭火煲仔飯，用餐抓 1 小時。</div>
+            <div class="desc">
+                米其林必比登推薦！香港最頂級的炭火煲仔飯，用餐抓 1.5 小時。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-money">💰 總價估 ~$320</span><p>
+                        煲仔飯約 $110，加上幾道熱炒小菜。<br>
+                        <span style="color:#d93025; font-size: 0.9rem; font-weight: bold; display:block; margin-top:4px;">💳 支援：強烈建議備妥現金</span>
+                    </p></div>
+                    <div class="tag-row"><span class="tag t-star">⭐ 必吃招牌</span><p><b>白鱔滑雞煲仔飯、臘味煲仔飯。</b> 底部焦脆的鍋巴淋上特製甜醬油，香氣四溢！</p></div>
+                    <div class="tag-row"><span class="tag t-tip">💡 點餐戰術</span><p>煲仔飯為生米炭火現煮，<b>等候時間較長 (約20-30分)</b>。建議入座後「先點煲仔飯」，再慢慢看菜單點熱炒墊胃！</p></div>
+                </div>
+            </div>
             <a href="http://googleusercontent.com/maps.google.com/?q=西環坤記煲仔小菜" target="_blank" class="nav-btn">開啟 GPS 導航至坤記</a>
         </div>
 
-        <div class="card" data-start="20:10" data-end="22:00">
-            <span class="time">20:10 - 22:00</span><h3 class="title">晚間漫步與手搖採買</h3>
-            <div class="location-bar">西營盤 ➔ 灣仔 / 銅鑼灣鬧區</div>
-            <div class="desc">吃飽後搭乘地鐵或悠閒的「叮叮車」回到灣仔/銅鑼灣鬧區。</div>
+        <div class="card" data-start="20:40" data-end="22:00">
+            <span class="time">20:40 - 22:00</span>
+            <h3 class="title">晚間漫步與手搖採買</h3>
+            <div class="location-bar">西營盤 ➔ 灣仔 (搭乘叮叮車)</div>
+            <div class="desc">
+                吃飽後搭乘悠閒的「叮叮車」回到灣仔鬧區，享受夜晚的香港街頭。
+                <div class="checklist">
+                    <div class="checklist-title">🌃 夜間任務清單：</div>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">搭乘東行叮叮車</span>
+                            <span class="check-desc">在西營盤搭乘「東行」的電車回灣仔，吹著晚風看夜景消化晚餐 (單人 $3 HKD)。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox">
+                        <div class="check-content">
+                            <span class="check-title">最後採買與手搖</span>
+                            <span class="check-desc">逛街補齊藥妝零食，並買一杯爆紅的「霸王茶姬」或是「喜茶」(雙人估約 $60) 回飯店爽喝！</span>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="card-mtr-widget" data-from="ISL-SYP" data-to="ISL-WAC">
+                    <div class="w-header">
+                        <span class="w-title">🚇 戰術備案：改搭港鐵回灣仔</span>
+                        <button class="w-btn" onclick="scanCardMTR(this)">掃描班次</button>
+                    </div>
+                    <div class="w-result">
+                        <div class="w-row"><span>預估車程：</span><span class="w-val j-time">--</span></div>
+                        <div class="w-row"><span>下一班車：</span><span class="w-val n-train" style="color:#d93025;">--</span></div>
+                        <div class="w-row" style="border-top:1px solid rgba(0,0,0,0.1); padding-top:8px;">
+                            <span style="color:var(--tech-blue); font-weight:bold;">🎯 預計抵達：</span>
+                            <span class="w-val a-time" style="color:var(--tech-blue); font-size: 1.3rem;">--:--</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
-        <div class="card" data-start="22:00" data-end="23:59">
-            <span class="time">22:00 以後</span><h3 class="title">滿載而歸 (回飯店)</h3>
+        <div class="card" data-start="22:00" data-end="23:30">
+            <span class="time">22:00 以後</span>
+            <h3 class="title">滿載而歸 (回飯店)</h3>
             <div class="location-bar">灣仔英皇駿景酒店</div>
-            <div class="desc">帶著手搖飲與滿滿的美食回憶，步行或搭車返回飯店。</div>
+            <div class="desc">
+                帶著手搖飲與滿滿的夜景回憶，步行返回飯店。
+                <div class="info-group">
+                    <div class="tag-row"><span class="tag t-tip">💡 休息整頓</span><p>完美結束第四天充實的行程！回房間後可以整理一下這幾天的戰利品，準備明天的最終撤退。</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-start="23:30" data-end="23:59">
+            <span class="time">23:30 以後</span>
+            <h3 class="title">DAY 04 戰備結算</h3>
+            <div class="location-bar">灣仔英皇駿景酒店</div>
+            <div class="desc">
+                港島山頂與美食巡禮達成！以下為本日<b>雙人總結算</b>預估開銷統計：
+                
+                <div class="data-box">
+                    <span>> 交通：港鐵雙趟($20)+叮叮($6) = $26</span>
+                    <span>> 門票：太平山頂纜車套票 = 約 $300</span>
+                    <span>> 飲食：沾仔記($100)+飲品($70)+坤記($320)+手搖($60) = $550</span>
+                    <span class="total">> 雙人總計估算: $876 HKD</span>
+                </div>
+
+                <div class="checklist" style="margin-top: 20px;">
+                    <div class="checklist-title">💰 支付方式盤點與建議：</div>
+                    <label>
+                        <input type="checkbox" checked disabled>
+                        <div class="check-content">
+                            <span class="check-title">現金需求 (約 $500 HKD)</span>
+                            <span class="check-desc">沾仔記、蘭芳園、坤記煲仔飯等老店，強烈建議使用現金結帳。</span>
+                        </div>
+                    </label>
+                    <label>
+                        <input type="checkbox" checked disabled>
+                        <div class="check-content">
+                            <span class="check-title">刷卡與八達通需求</span>
+                            <span class="check-desc">太平山頂套票建議事先在 Klook 刷卡買好。八達通則用於搭乘港鐵與叮叮車。</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
     </div>
-
     <div class="controls">
         <button class="btn" id="btn-prev" title="上一個行程">⬅</button>
         <button class="btn btn-center" id="btn-now">📍 追蹤當前行程</button>
